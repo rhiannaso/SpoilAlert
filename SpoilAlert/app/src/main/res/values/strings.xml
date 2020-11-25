@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">SpoilAlert</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">SpoilAlert</string>
+    <string name="nav_header_subtitle">Track the expiration of groceries!</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Log Groceries</string>
+    <string name="menu_fridge">View Fridge</string>
+    <string name="menu_store">Find Store</string>
+
+    <string name="log_hint">Enter grocery item…</string>
+    <string name="submit">Submit</string>
+</resources>
