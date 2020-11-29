@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "142369168075",
+    "firebase_url": "https://spoilalert-7c0e6.firebaseio.com",
+    "project_id": "spoilalert-7c0e6",
+    "storage_bucket": "spoilalert-7c0e6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142369168075:android:7b825316bdf78ddee3994e",
+        "android_client_info": {
+          "package_name": "edu.ucsb.cs.cs184.rhiannaso.spoilalert"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "142369168075-8uj1hsfvgut714qgjva4r8opap3q8vqk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYXvfnncYboSw6iqQRU-JaewhCJvrmSg8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "142369168075-8uj1hsfvgut714qgjva4r8opap3q8vqk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
