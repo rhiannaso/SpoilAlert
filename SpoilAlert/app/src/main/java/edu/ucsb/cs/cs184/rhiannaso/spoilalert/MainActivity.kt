@@ -1,8 +1,10 @@
 package edu.ucsb.cs.cs184.rhiannaso.spoilalert
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.widget.EditText
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -14,6 +16,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +43,14 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_home, R.id.nav_fridge, R.id.nav_store), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    fun onClickSubmit(v: View) {
+        var text_view = findViewById<EditText>(R.id.editTextTextPersonName)
+        var text = text_view.getText().toString()
+        Log.d("input text", text)
+        var uuid = UUID.randomUUID()
+        Log.d("UUID", uuid.toString())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
