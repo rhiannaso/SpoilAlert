@@ -5,8 +5,10 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.widget.EditText
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -20,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,6 +52,14 @@ class MainActivity : AppCompatActivity() {
 
         createNotificationChannel()
 
+    }
+
+    fun onClickSubmit(v: View) {
+        var text_view = findViewById<EditText>(R.id.editTextTextPersonName)
+        var text = text_view.getText().toString()
+        Log.d("input text", text)
+        var uuid = UUID.randomUUID()
+        Log.d("UUID", uuid.toString())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
