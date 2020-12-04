@@ -1,6 +1,10 @@
 package edu.ucsb.cs.cs184.rhiannaso.spoilalert
 
 import android.content.Intent
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -17,6 +21,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -51,6 +60,9 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        createNotificationChannel()
+
     }
 
     fun onClickSubmit(v: View) {
@@ -70,5 +82,37 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    //notificationSetup
+    private val CHANNEL_ID = "spoil_alert_id"
+    private val notificationId = 101
+
+    private fun createNotificationChannel()
+    {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            val name = "Hello World"
+            val descriptionText = "I am birthed"
+            val importance:Int = NotificationManager.IMPORTANCE_DEFAULT
+            val channel: NotificationChannel = NotificationChannel(CHANNEL_ID,name,importance).apply{
+                description= "I am born"
+            }
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun sendNotification()
+    {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_kitchen_24px)
+                .setContentTitle("7am")
+                .setContentText("the usual morning line up")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        with(NotificationManagerCompat.from(this)){
+            notify(notificationId, builder.build())
+        }
     }
 }
