@@ -58,6 +58,7 @@ class HomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        var viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         var notif:Button= requireActivity().findViewById(R.id.notifButton)
         notif.setOnClickListener{sendNotification()}
 
@@ -134,8 +135,10 @@ class HomeFragment : Fragment() {
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("name").setValue(text)
                             // add item iid to users item log
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("iid").setValue(dataSnapshot.child(text).child("iid").value.toString())
-                            // add item shelf life to users item log
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("expiration_date").setValue(dataSnapshot.child(text).child("shelf_life").value.toString())
+                            // add item expiration date (current time + shelf life) to users item log
+                            var shelfLife = dataSnapshot.child(text).child("shelf_life").value.toString().toInt()
+                            var expiration = viewModel.calculateExpiration(shelfLife)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("expiration_date").setValue(expiration)
                         } else {
                             Log.d("input", "input item does not exist in items table")
                         }
