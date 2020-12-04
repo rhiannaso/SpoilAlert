@@ -56,6 +56,7 @@ class HomeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        var viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         var notif:Button= requireActivity().findViewById(R.id.notifButton)
         notif.setOnClickListener{sendNotification()}
 
