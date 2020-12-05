@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.join_house.JoinHouseFragment">
+
+    <TextView
+        android:id="@+id/create_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/house_create"
+        android:textSize="@dimen/house_header"
+        app:layout_constraintBottom_toTopOf="@+id/jh_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3" />
+
+    <TextView
+        android:id="@+id/create_tv_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/house_header_spacing"
+        android:gravity="center"
+        android:text="@string/house_create_desc"
+        android:textSize="@dimen/house_desc"
+        app:layout_constraintEnd_toEndOf="@+id/jh_guideline_v2"
+        app:layout_constraintStart_toStartOf="@+id/jh_guideline_v1"
+        app:layout_constraintTop_toBottomOf="@+id/create_tv" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/jh_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/join_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/house_join"
+        android:textSize="@dimen/house_header"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/jh_guideline"
+        app:layout_constraintVertical_bias="0.3" />
+
+    <TextView
+        android:id="@+id/join_tv_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/house_header_spacing"
+        android:gravity="center"
+        android:text="@string/house_join_desc"
+        android:textSize="@dimen/house_desc"
+        app:layout_constraintEnd_toEndOf="@+id/jh_guideline_v2"
+        app:layout_constraintStart_toStartOf="@+id/jh_guideline_v1"
+        app:layout_constraintTop_toBottomOf="@+id/join_tv" />
+
+    <EditText
+        android:id="@+id/create_username"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/house_input_height"
+        android:hint="@string/house_input_hint"
+        android:layout_marginTop="@dimen/house_input_spacing"
+        android:paddingEnd="@dimen/house_input_side_spacing"
+        app:layout_constraintTop_toBottomOf="@+id/create_tv_desc"
+        app:layout_constraintEnd_toStartOf="@+id/create_btn"
+        app:layout_constraintStart_toStartOf="@+id/jh_guideline_v1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed" />
+
+    <ImageButton
+        android:id="@+id/create_btn"
+        android:layout_width="@dimen/house_input_btn"
+        android:layout_height="@dimen/house_input_btn"
+        android:background="@color/bright_red"
+        android:src="@drawable/ic_check"
+        android:layout_marginTop="@dimen/house_input_spacing"
+        app:layout_constraintTop_toBottomOf="@+id/create_tv_desc"
+        app:layout_constraintEnd_toEndOf="@+id/jh_guideline_v2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/create_username" />
+
+    <TextView
+        android:id="@+id/create_err_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/house_header_spacing"
+        android:gravity="center"
+        android:text="@string/house_err_msg"
+        android:textSize="@dimen/house_err"
+        android:padding="8dp"
+        android:background="@color/light_red"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/jh_guideline_v2"
+        app:layout_constraintStart_toStartOf="@+id/jh_guideline_v1"
+        app:layout_constraintTop_toBottomOf="@+id/create_username" />
+
+    <TextView
+        android:id="@+id/create_success"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/house_header_spacing"
+        android:gravity="center"
+        android:text="@string/house_success_msg"
+        android:textSize="@dimen/house_err"
+        android:padding="8dp"
+        android:background="@color/light_green"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/jh_guideline_v2"
+        app:layout_constraintStart_toStartOf="@+id/jh_guideline_v1"
+        app:layout_constraintTop_toBottomOf="@+id/create_username" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/jh_guideline_v1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/jh_guideline_v2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <EditText
+        android:id="@+id/join_username"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/house_input_height"
+        android:hint="@string/house_input_hint"
+        android:layout_marginTop="@dimen/house_input_spacing"
+        android:paddingEnd="@dimen/house_input_side_spacing"
+        app:layout_constraintTop_toBottomOf="@+id/join_tv_desc"
+        app:layout_constraintEnd_toStartOf="@+id/join_btn"
+        app:layout_constraintStart_toStartOf="@+id/jh_guideline_v1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed" />
+
+    <ImageButton
+        android:id="@+id/join_btn"
+        android:layout_width="@dimen/house_input_btn"
+        android:layout_height="@dimen/house_input_btn"
+        android:background="@color/bright_red"
+        android:src="@drawable/ic_check"
+        android:layout_marginTop="@dimen/house_input_spacing"
+        app:layout_constraintTop_toBottomOf="@+id/join_tv_desc"
+        app:layout_constraintEnd_toEndOf="@+id/jh_guideline_v2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/join_username" />
+
+    <TextView
+        android:id="@+id/join_err_msg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/house_header_spacing"
+        android:gravity="center"
+        android:text="@string/house_err_msg_join"
+        android:textSize="@dimen/house_err"
+        android:padding="8dp"
+        android:background="@color/light_red"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/jh_guideline_v2"
+        app:layout_constraintStart_toStartOf="@+id/jh_guideline_v1"
+        app:layout_constraintTop_toBottomOf="@+id/join_username" />
+
+    <TextView
+        android:id="@+id/join_success"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/house_header_spacing"
+        android:gravity="center"
+        android:text="@string/house_success_msg_join"
+        android:textSize="@dimen/house_err"
+        android:padding="8dp"
+        android:background="@color/light_green"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/jh_guideline_v2"
+        app:layout_constraintStart_toStartOf="@+id/jh_guideline_v1"
+        app:layout_constraintTop_toBottomOf="@+id/join_username" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,20 +1,19 @@
 package edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.home
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.EditText
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -32,9 +31,9 @@ class HomeFragment : Fragment() {
 
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         homeViewModel =
                 ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -61,8 +60,13 @@ class HomeFragment : Fragment() {
                 .addOnCompleteListener {
                     // ...
                 }
-            val landingIntent = Intent(requireActivity().applicationContext, LandingActivity::class.java)
-            requireActivity().startActivity(landingIntent)
+            val drawerLayout: DrawerLayout = requireActivity().findViewById(R.id.drawer_layout)
+            drawerLayout.closeDrawer(Gravity.START as Int)
+            val landingIntent = Intent(
+                requireActivity().applicationContext,
+                LandingActivity::class.java
+            )
+            requireActivity().startActivityForResult(landingIntent, 0)
         }
 
         var button = requireActivity().findViewById<Button>(R.id.submit_button)
@@ -81,7 +85,8 @@ class HomeFragment : Fragment() {
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
                     if (dataSnapshot.hasChild(text)) {
-                        Log.d("input",
+                        Log.d(
+                            "input",
                             dataSnapshot.child(text)
                                 .child("name").value.toString() + "for user: " + FirebaseAuth.getInstance().uid.toString()
                         )
@@ -89,17 +94,32 @@ class HomeFragment : Fragment() {
                         var uuid = UUID.randomUUID()
                         Log.d("UUID", uuid.toString())
                         // add item name to users item log
-                        myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("name").setValue(text)
+                        myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                            .child(
+                                "items"
+                            ).child(uuid.toString()).child("name").setValue(text)
                         // add item iid to users item log
-                        myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("iid").setValue(dataSnapshot.child(text).child("iid").value.toString())
+                        myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                            .child(
+                                "items"
+                            ).child(uuid.toString()).child("iid").setValue(
+                            dataSnapshot.child(text).child(
+                                "iid"
+                            ).value.toString()
+                        )
                         // add item expiration date (current time + shelf life) to users item log
-                        var shelfLife = dataSnapshot.child(text).child("shelf_life").value.toString().toInt()
+                        var shelfLife =
+                            dataSnapshot.child(text).child("shelf_life").value.toString().toInt()
                         var expiration = viewModel.calculateExpiration(shelfLife)
-                        myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("expiration_date").setValue(expiration)
+                        myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                            .child(
+                                "items"
+                            ).child(uuid.toString()).child("expiration_date").setValue(expiration)
                     } else {
                         Log.d("input", "input item does not exist in items table")
                     }
                 }
+
                 override fun onCancelled(error: DatabaseError) {
                     // Failed to read value
                     Log.w("In surfaceCreated", "Failed to read value.", error.toException())

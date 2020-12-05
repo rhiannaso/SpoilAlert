@@ -22,4 +22,10 @@
         android:name="edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.store.StoreFragment"
         android:label="@string/menu_store"
         tools:layout="@layout/fragment_store" />
+
+    <fragment
+        android:id="@+id/nav_join_house"
+        android:name="edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.join_house.JoinHouseFragment"
+        android:label="@string/menu_join_house"
+        tools:layout="@layout/fragment_join_house" />
 </navigation>
