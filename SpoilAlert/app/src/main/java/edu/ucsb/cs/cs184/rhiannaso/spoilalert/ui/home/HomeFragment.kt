@@ -10,19 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import edu.ucsb.cs.cs184.rhiannaso.spoilalert.MainActivity
 import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.auth.IdpResponse
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.SignInButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -100,8 +92,10 @@ class HomeFragment : Fragment() {
                         myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("name").setValue(text)
                         // add item iid to users item log
                         myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("iid").setValue(dataSnapshot.child(text).child("iid").value.toString())
-                        // add item shelf life to users item log
-                        myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("expiration_date").setValue(dataSnapshot.child(text).child("shelf_life").value.toString())
+                        // add item expiration date (current time + shelf life) to users item log
+                        var shelfLife = dataSnapshot.child(text).child("shelf_life").value.toString().toInt()
+                        var expiration = viewModel.calculateExpiration(shelfLife)
+                        myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("expiration_date").setValue(expiration)
                     } else {
                         Log.d("input", "input item does not exist in items table")
                     }
