@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -27,9 +26,6 @@ class FridgeFragment : Fragment() {
 
     private lateinit var fridgeViewModel: FridgeViewModel
 
-    var item_list : MutableList<ItemCard> = ArrayList<ItemCard>()
-    var adapter : ItemAdapter = ItemAdapter(item_list)
-
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -47,6 +43,9 @@ class FridgeFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        var item_list : MutableList<ItemCard> = ArrayList<ItemCard>()
+        var adapter : ItemAdapter = ItemAdapter(item_list)
 
         val recycler_view = requireActivity().findViewById<RecyclerView>(R.id.recycler_view)
 
@@ -70,6 +69,7 @@ class FridgeFragment : Fragment() {
                 //Remove swiped item from list and notify the RecyclerView
                 val position = viewHolder.adapterPosition
                 myRef_user.child(item_list[position].eid).removeValue()
+                Log.d("onSwiped", item_list.toString() + " " + position.toString())
                 item_list.removeAt(position)
                 adapter.notifyItemRemoved(position)
             }
@@ -125,7 +125,7 @@ class FridgeFragment : Fragment() {
                     Log.d("in items snapshot", item_list.toString())
                 }
                 Log.d("before sort", item_list.toString())
-                item_list = item_list.sortedWith(compareBy({ it.item_expiration }, {it.item_name}, {it.item_quantity})) as MutableList<ItemCard>
+                item_list = item_list.sortedWith(compareBy({ it.item_expiration })).toMutableList()
                 Log.d("after sort", item_list.toString())
                 adapter = ItemAdapter(item_list)
                 recycler_view.adapter = adapter
