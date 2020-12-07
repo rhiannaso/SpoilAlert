@@ -96,6 +96,7 @@ class HomeFragment : Fragment() {
                         var shelfLife = dataSnapshot.child(text).child("shelf_life").value.toString().toInt()
                         var expiration = viewModel.calculateExpiration(shelfLife)
                         myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("expiration_date").setValue(expiration)
+                        myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("eid").setValue(uuid.toString())
                     } else {
                         Log.d("input", "input item does not exist in items table")
                     }
