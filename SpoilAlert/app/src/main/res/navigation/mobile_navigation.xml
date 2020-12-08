@@ -28,4 +28,10 @@
         android:name="edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.join_house.JoinHouseFragment"
         android:label="@string/menu_join_house"
         tools:layout="@layout/fragment_join_house" />
+
+    <fragment
+        android:id="@+id/nav_members"
+        android:name="edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.members.MembersFragment"
+        android:label="@string/menu_members"
+        tools:layout="@layout/fragment_members" />
 </navigation>

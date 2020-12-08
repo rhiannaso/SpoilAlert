@@ -11,6 +11,7 @@
     <string name="menu_fridge">View Fridge</string>
     <string name="menu_store">Find Store</string>
     <string name="menu_join_house">Create/Join a House</string>
+    <string name="menu_members">My House</string>
 
     <string name="log_hint">Enter grocery item…</string>
     <string name="submit">Submit</string>
@@ -36,4 +37,6 @@
     <string name="house_err_msg_join">No house with the given username exists - please enter a new username.</string>
     <string name="house_success_msg_join">Successfully joined house.</string>
     <string name="house_input_hint">Unique Username</string>
+    <string name="leave_house">LEAVE</string>
+    <string name="house_members">House Members</string>
 </resources>

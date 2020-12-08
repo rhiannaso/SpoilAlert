@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.MainActivity
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
 import java.util.*
 
@@ -69,9 +70,11 @@ class JoinHouseFragment : Fragment() {
                         val navigationView = requireActivity().findViewById<View>(R.id.nav_view) as NavigationView
                         val nav_menu: Menu = navigationView.menu
                         nav_menu.findItem(R.id.nav_join_house).isVisible = false
+                        nav_menu.findItem(R.id.nav_members).isVisible = true
                         // Indicate that user is in house
                         val houseIdView = requireActivity().findViewById<TextView>(R.id.house_id)
                         houseIdView.text = "In House: $username_input"
+                        (activity as MainActivity).setCurrHouse(username_input)
                     }
                 }
                 override fun onCancelled(error: DatabaseError) {
@@ -102,9 +105,11 @@ class JoinHouseFragment : Fragment() {
                         val navigationView = requireActivity().findViewById<View>(R.id.nav_view) as NavigationView
                         val nav_menu: Menu = navigationView.menu
                         nav_menu.findItem(R.id.nav_join_house).isVisible = false
+                        nav_menu.findItem(R.id.nav_members).isVisible = true
                         // Indicate that user is in house
                         val houseIdView = requireActivity().findViewById<TextView>(R.id.house_id)
                         houseIdView.text = "In House: $username_input"
+                        (activity as MainActivity).setCurrHouse(username_input)
                     } else {
                         Log.i("Join House", "House does not exist with given username")
                         err_msg.visibility = View.VISIBLE

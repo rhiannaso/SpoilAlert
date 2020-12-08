@@ -25,19 +25,20 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.members.MembersFragment
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var currUser : String
+    private lateinit var currUser: String
+    private lateinit var currHouse: String
     private val currRequestCode = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +64,11 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_fridge, R.id.nav_store, R.id.nav_join_house
+                R.id.nav_home,
+                R.id.nav_fridge,
+                R.id.nav_store,
+                R.id.nav_join_house,
+                R.id.nav_members
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -71,6 +76,18 @@ class MainActivity : AppCompatActivity() {
 
         createNotificationChannel()
 
+    }
+
+    fun getCurrUser() : String {
+        return currUser
+    }
+
+    fun getCurrHouse() : String {
+        return currHouse
+    }
+
+    fun setCurrHouse(house: String) {
+        currHouse = house
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -102,11 +119,14 @@ class MainActivity : AppCompatActivity() {
                         if (user.key == currUser) {
                             Log.i("checkIfInHouse", "User is in house")
                             houseIdView.text = "In House: ${house.key}"
+                            currHouse = house.key.toString()
                             nav_menu.findItem(R.id.nav_join_house).isVisible = false
+                            nav_menu.findItem(R.id.nav_members).isVisible = true
                         } else {
                             Log.i("checkIfInHouse", "User not in house")
                             houseIdView.text = ""
                             nav_menu.findItem(R.id.nav_join_house).isVisible = true
+                            nav_menu.findItem(R.id.nav_members).isVisible = false
                         }
                     }
                 }
