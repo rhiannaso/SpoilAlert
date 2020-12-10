@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
@@ -30,7 +28,8 @@ class LandingActivity : AppCompatActivity() {
         signin_button = findViewById(R.id.google_button)
         // Choose authentication providers
         val providers = arrayListOf(
-            AuthUI.IdpConfig.GoogleBuilder().build())
+            AuthUI.IdpConfig.GoogleBuilder().build()
+        )
 
         // signin button intent
         signin_button.setOnClickListener {
@@ -41,7 +40,8 @@ class LandingActivity : AppCompatActivity() {
                     .createSignInIntentBuilder()
                     .setAvailableProviders(providers)
                     .build(),
-                RC_SIGN_IN)
+                RC_SIGN_IN
+            )
         }
     }
 
@@ -67,14 +67,26 @@ class LandingActivity : AppCompatActivity() {
                         // This method is called once with the initial value and again
                         // whenever data at this location is updated.
                         if (dataSnapshot.hasChild(FirebaseAuth.getInstance().currentUser?.uid.toString())) {
-                            Log.d("user", FirebaseAuth.getInstance().currentUser?.uid.toString() + " already exists in users table")
-                        }
-                        else {
-                            Log.d("user", FirebaseAuth.getInstance().currentUser?.uid.toString() + " does not exist in users table, adding now")
+                            Log.d(
+                                "user",
+                                FirebaseAuth.getInstance().currentUser?.uid.toString() + " already exists in users table"
+                            )
+                        } else {
+                            Log.d(
+                                "user",
+                                FirebaseAuth.getInstance().currentUser?.uid.toString() + " does not exist in users table, adding now"
+                            )
                             myRef.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                            myRef.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("name").setValue(
-                                FirebaseAuth.getInstance().currentUser?.displayName.toString())
+                            myRef.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                .child(
+                                    "name"
+                                ).setValue(
+                                FirebaseAuth.getInstance().currentUser?.displayName.toString()
+                            )
                         }
+                        val resultIntent = Intent()
+                        resultIntent.putExtra("user_id", FirebaseAuth.getInstance().currentUser?.uid.toString())
+                        setResult(RESULT_OK, resultIntent)
                         finish()
                     }
 

@@ -10,6 +10,16 @@
     <dimen name="landing_logo_spacing">36dp</dimen>
     <dimen name="entry_message">24sp</dimen>
     <dimen name="entry_prompt">18sp</dimen>
+
+    <dimen name="house_header">32sp</dimen>
+    <dimen name="house_desc">14sp</dimen>
+    <dimen name="house_header_spacing">8dp</dimen>
+    <dimen name="house_input_spacing">16dp</dimen>
+    <dimen name="house_input_side_spacing">32dp</dimen>
+    <dimen name="house_input_height">42dp</dimen>
+    <dimen name="house_input_btn">34dp</dimen>
+    <dimen name="house_err">12sp</dimen>
+    <dimen name="house_id">16sp</dimen>
     <!--
     Because the window insets on round devices are larger than 15dp, this padding only applies
     to square screens.

@@ -10,11 +10,19 @@
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_fridge"
-            android:icon="@drawable/ic_view"
+            android:icon="@drawable/ic_kitchen_24px"
             android:title="@string/menu_fridge" />
         <item
             android:id="@+id/nav_store"
             android:icon="@drawable/ic_store"
             android:title="@string/menu_store" />
+        <item
+            android:id="@+id/nav_join_house"
+            android:icon="@drawable/ic_house"
+            android:title="@string/menu_join_house" />
+        <item
+            android:id="@+id/nav_members"
+            android:icon="@drawable/ic_members"
+            android:title="@string/menu_members" />
     </group>
 </menu>
