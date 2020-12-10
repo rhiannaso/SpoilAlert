@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClickSubmit(v: View) {
-        var text_view = findViewById<EditText>(R.id.editTextTextPersonName)
+        var text_view = findViewById<EditText>(R.id.editItem)
         var text = text_view.getText().toString()
         Log.d("input text", text)
         var uuid = UUID.randomUUID()

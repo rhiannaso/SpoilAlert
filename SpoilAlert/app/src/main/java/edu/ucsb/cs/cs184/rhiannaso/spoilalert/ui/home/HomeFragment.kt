@@ -1,6 +1,5 @@
 package edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.home
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,9 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
@@ -25,7 +22,6 @@ import com.google.firebase.ktx.Firebase
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.LandingActivity
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
 import java.util.*
-import kotlin.system.exitProcess
 
 class HomeFragment : Fragment() {
 
@@ -45,6 +41,7 @@ class HomeFragment : Fragment() {
         homeViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })*/
+
         return root
     }
 
@@ -65,10 +62,18 @@ class HomeFragment : Fragment() {
             requireActivity().startActivity(landingIntent)
         }
 
+        var text_view = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
+        val languages = resources.getStringArray(R.array.Languages)
+        val adapter = context?.let {
+            ArrayAdapter(it,
+                android.R.layout.simple_list_item_1, languages)
+        }
+        text_view.setAdapter(adapter)
+
         var button = requireActivity().findViewById<Button>(R.id.submit_button)
         // onClick for submit item button
         button.setOnClickListener {
-            var text_view = requireActivity().findViewById<EditText>(R.id.editTextTextPersonName)
+            var text_view = requireActivity().findViewById<EditText>(R.id.editItem)
 
             var quantity_view = requireActivity().findViewById<EditText>(R.id.editQuantity)
             var text = text_view.getText().toString()

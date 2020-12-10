@@ -17,6 +17,14 @@
     <string name="sign_out">Sign Out</string>
     <string name="image_alt_desc">Spoil Alert Logo</string>
     <string name="title_activity_landing">LandingActivity</string>
+
+    <string-array name="Languages">
+        <item>apple</item>
+        <item>banana</item>
+        <item>carrot</item>
+        <item>ketchup</item>
+        <item>spinach</item>
+    </string-array>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
