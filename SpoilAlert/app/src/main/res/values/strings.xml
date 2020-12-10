@@ -12,6 +12,7 @@
     <string name="menu_store">Find Store</string>
 
     <string name="log_hint">Enter grocery item…</string>
+    <string name="quantity_hint">Enter Quantity...</string>
     <string name="submit">Submit</string>
     <string name="sign_out">Sign Out</string>
     <string name="image_alt_desc">Spoil Alert Logo</string>
