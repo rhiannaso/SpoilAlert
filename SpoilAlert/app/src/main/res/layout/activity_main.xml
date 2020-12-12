@@ -27,7 +27,18 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/house_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="@dimen/house_id"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
                 <Button
                     android:id="@+id/signout_button"
                     android:layout_width="match_parent"
@@ -35,8 +46,10 @@
                     android:text="@string/sign_out"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
+                    android:layout_weight="1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
             </LinearLayout>
         </RelativeLayout>
     </com.google.android.material.navigation.NavigationView>

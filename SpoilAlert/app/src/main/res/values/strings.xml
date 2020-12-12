@@ -10,6 +10,8 @@
     <string name="menu_home">Log Groceries</string>
     <string name="menu_fridge">View Fridge</string>
     <string name="menu_store">Find Store</string>
+    <string name="menu_join_house">Create/Join a House</string>
+    <string name="menu_members">My House</string>
 
     <string name="log_hint">Enter grocery item…</string>
     <string name="quantity_hint">Enter Quantity...</string>
@@ -32,4 +34,18 @@
     <string name="hello_world">Hello Square World!</string>
     <string name="app_desc">Track the expiration of your groceries</string>
     <string name="entry_prompt">To start tracking groceries:</string>
+    <string name="house_create">Create a House</string>
+    <string name="house_join">Join a House</string>
+    <string name="house_create_desc">Create a "house" with your roommates to track all of your
+        groceries and their expiration dates in a communal fridge.</string>
+    <string name="house_join_desc">Not a member of a house? Enter the unique username for the
+        house to join.</string>
+    <string name="house_err_msg">Username already exists - please choose a new username.</string>
+    <string name="house_success_msg">House successfully created. Share the unique username with
+        your roommates to join.</string>
+    <string name="house_err_msg_join">No house with the given username exists - please enter a new username.</string>
+    <string name="house_success_msg_join">Successfully joined house.</string>
+    <string name="house_input_hint">Unique Username</string>
+    <string name="leave_house">LEAVE</string>
+    <string name="house_members">House Members</string>
 </resources>

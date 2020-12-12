@@ -4,15 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.*
+import android.view.*
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -30,9 +30,9 @@ class HomeFragment : Fragment() {
 
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         homeViewModel =
                 ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -58,8 +58,13 @@ class HomeFragment : Fragment() {
                 .addOnCompleteListener {
                     // ...
                 }
-            val landingIntent = Intent(requireActivity().applicationContext, LandingActivity::class.java)
-            requireActivity().startActivity(landingIntent)
+            val drawerLayout: DrawerLayout = requireActivity().findViewById(R.id.drawer_layout)
+            drawerLayout.closeDrawer(Gravity.START as Int)
+            val landingIntent = Intent(
+                requireActivity().applicationContext,
+                LandingActivity::class.java
+            )
+            requireActivity().startActivityForResult(landingIntent, 0)
         }
 
         var text_view = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
@@ -135,7 +140,6 @@ class HomeFragment : Fragment() {
                     }
                 })
             }
-        }
     }
   
     private val CHANNEL_ID = "spoil_alert_id"

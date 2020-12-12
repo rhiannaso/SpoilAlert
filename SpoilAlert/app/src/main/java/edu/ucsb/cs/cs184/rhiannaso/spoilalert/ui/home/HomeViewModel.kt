@@ -22,7 +22,7 @@ class HomeViewModel : ViewModel() {
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
 
-        val format = SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a")
+        val format = SimpleDateFormat("EEEE, MM/dd/yyyy 'at' h:mm a")
         return format.format(c.time)
     }
 
