@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 class FridgeViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-//        value = "My Fridge"
+//        value = "Fridge is empty"
     }
     val text: LiveData<String> = _text
 }

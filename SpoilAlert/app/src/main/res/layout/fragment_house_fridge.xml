@@ -7,16 +7,16 @@
     tools:context=".ui.fridge.FridgeFragment">
 
     <TextView
-        android:id="@+id/fridge_empty"
+        android:id="@+id/house_fridge_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:layout_centerHorizontal="true"
         android:textSize="25dp"
-        android:text="Fridge is empty."/>
+        android:text="House Fridge is empty."/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+        android:id="@+id/recycler_view_house"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
