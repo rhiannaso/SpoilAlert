@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,6 +50,7 @@ class HouseFridgeFragment : Fragment() {
         var adapter : ItemAdapter = ItemAdapter(item_list)
 
         val recycler_view = requireActivity().findViewById<RecyclerView>(R.id.recycler_view_house)
+        val house_fridge_empty = requireActivity().findViewById<TextView>(R.id.house_fridge_empty)
         var house_users : MutableList<String> = ArrayList<String>()
 
         val curr_house = (activity as MainActivity).getCurrHouse()
@@ -65,11 +67,17 @@ class HouseFridgeFragment : Fragment() {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             for (snapshot in dataSnapshot.children) {
                                 val format = SimpleDateFormat("MM/dd/yyyy")
-                                val item = ItemCard(snapshot.child("name").value.toString(), "1", format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString())
+                                val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(), format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString())
                                 item_list.add(item)
                             }
                             item_list = item_list.sortedWith(compareBy({ it.item_expiration })).toMutableList()
                             adapter = ItemAdapter(item_list)
+                            if (item_list.size > 0) {
+                                house_fridge_empty.visibility = TextView.INVISIBLE
+                            }
+                            else if (item_list.size == 0) {
+                                house_fridge_empty.visibility = TextView.VISIBLE
+                            }
                             Log.d("item_list_house", item_list.toString())
                             recycler_view.adapter = adapter
                             adapter.notifyDataSetChanged()

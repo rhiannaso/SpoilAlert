@@ -84,16 +84,14 @@ class HomeFragment : Fragment() {
             var text = text_view.getText().toString()
             var quantity = quantity_view.getText().toString()
 
-            if(quantity.trim().length<=0 || text.trim().length<=0)
-            {
-                if(quantity.trim().length<=0 && text.trim().length<=0)
+            if (quantity.trim().length <= 0 || text.trim().length <= 0) {
+                if (quantity.trim().length <= 0 && text.trim().length <= 0)
                     Toast.makeText(context, "Please include item and quantity", Toast.LENGTH_LONG).show()
-                else if(text.trim().length<=0)
+                else if (text.trim().length <= 0)
                     Toast.makeText(context, "Please include item", Toast.LENGTH_SHORT).show()
-                else if(quantity.trim().length<=0)
+                else if (quantity.trim().length <= 0)
                     Toast.makeText(context, "Please include quantity", Toast.LENGTH_LONG).show()
-            }
-            else {
+            } else {
                 Log.d("input text", text)
                 Log.d("input quantity", quantity.toString())
 
@@ -117,6 +115,7 @@ class HomeFragment : Fragment() {
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("name").setValue(text)
                             // add item iid to users item log
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("iid").setValue(dataSnapshot.child(text).child("iid").value.toString())
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("eid").setValue(uuid.toString())
                             // add item expiration date (current time + shelf life) to users item log
                             var shelfLife = dataSnapshot.child(text).child("shelf_life").value.toString().toInt()
                             var expiration = viewModel.calculateExpiration(shelfLife)
@@ -126,7 +125,7 @@ class HomeFragment : Fragment() {
                             text_view.setText(null)
                             quantity_view.setText(null)
 
-                            var msg = quantity + " " + text +"(s) added to your fridge!"
+                            var msg = quantity + " " + text + "(s) added to your fridge!"
                             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
 
                         } else {
@@ -140,6 +139,7 @@ class HomeFragment : Fragment() {
                     }
                 })
             }
+        }
     }
   
     private val CHANNEL_ID = "spoil_alert_id"
