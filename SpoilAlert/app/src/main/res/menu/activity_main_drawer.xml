@@ -24,5 +24,9 @@
             android:id="@+id/nav_members"
             android:icon="@drawable/ic_members"
             android:title="@string/menu_members" />
+        <item
+            android:id="@+id/nav_house_fridge"
+            android:icon="@drawable/ic_members"
+            android:title="House Fridge" />
     </group>
 </menu>

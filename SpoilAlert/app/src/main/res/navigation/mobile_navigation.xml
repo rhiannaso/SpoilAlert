@@ -34,4 +34,10 @@
         android:name="edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.members.MembersFragment"
         android:label="@string/menu_members"
         tools:layout="@layout/fragment_members" />
+
+    <fragment
+        android:id="@+id/nav_house_fridge"
+        android:name="edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.house_fridge.HouseFridgeFragment"
+        android:label="House Fridge"
+        tools:layout="@layout/fragment_house_fridge" />
 </navigation>
