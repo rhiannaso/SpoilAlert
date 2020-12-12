@@ -70,6 +70,7 @@ class JoinHouseFragment : Fragment() {
                         val navigationView = requireActivity().findViewById<View>(R.id.nav_view) as NavigationView
                         val nav_menu: Menu = navigationView.menu
                         nav_menu.findItem(R.id.nav_join_house).isVisible = false
+                        nav_menu.findItem(R.id.nav_house_fridge).isVisible = true
                         nav_menu.findItem(R.id.nav_members).isVisible = true
                         // Indicate that user is in house
                         val houseIdView = requireActivity().findViewById<TextView>(R.id.house_id)
@@ -105,6 +106,7 @@ class JoinHouseFragment : Fragment() {
                         val navigationView = requireActivity().findViewById<View>(R.id.nav_view) as NavigationView
                         val nav_menu: Menu = navigationView.menu
                         nav_menu.findItem(R.id.nav_join_house).isVisible = false
+                        nav_menu.findItem(R.id.nav_house_fridge).isVisible = true
                         nav_menu.findItem(R.id.nav_members).isVisible = true
                         // Indicate that user is in house
                         val houseIdView = requireActivity().findViewById<TextView>(R.id.house_id)

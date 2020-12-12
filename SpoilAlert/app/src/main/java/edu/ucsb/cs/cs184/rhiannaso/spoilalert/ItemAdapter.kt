@@ -1,21 +1,11 @@
-package edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.fridge
+package edu.ucsb.cs.cs184.rhiannaso.spoilalert
 
-import android.text.Layout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
-import java.util.*
 
 class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 

@@ -19,6 +19,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ItemAdapter
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ItemCard
 import java.text.SimpleDateFormat
 
 
@@ -40,6 +42,7 @@ class FridgeFragment : Fragment() {
 //        })
         return root
     }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)

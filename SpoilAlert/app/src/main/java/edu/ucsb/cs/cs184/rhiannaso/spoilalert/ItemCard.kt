@@ -1,4 +1,4 @@
-package edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.fridge
+package edu.ucsb.cs.cs184.rhiannaso.spoilalert
 
 import java.util.*
 
