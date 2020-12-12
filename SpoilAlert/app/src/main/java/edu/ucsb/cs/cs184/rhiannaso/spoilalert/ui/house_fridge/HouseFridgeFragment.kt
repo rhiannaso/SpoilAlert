@@ -83,25 +83,6 @@ class HouseFridgeFragment : Fragment() {
             override fun onCancelled(databaseError: DatabaseError) {}
         })
 
-//        for (user in house_users) {
-//            val myRef_user = database.getReference("users").child(user).child("items")
-//            myRef_user.addListenerForSingleValueEvent(object : ValueEventListener {
-//                override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                    for (snapshot in dataSnapshot.children) {
-//                        val format = SimpleDateFormat("MM/dd/yyyy")
-//                        val item = ItemCard(snapshot.child("name").value.toString(), "1", format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString())
-//                        item_list.add(item)
-//                    }
-//                    item_list = item_list.sortedWith(compareBy({ it.item_expiration })).toMutableList()
-//                    adapter = ItemAdapter(item_list)
-//                    Log.d("item_list_house", item_list.toString())
-//                    recycler_view.adapter = adapter
-//                    adapter.notifyDataSetChanged()
-//                }
-//                override fun onCancelled(databaseError: DatabaseError) {}
-//            })
-//        }
-
         Log.d("item_list", item_list.toString())
 
         recycler_view.layoutManager = LinearLayoutManager(activity as Context)
