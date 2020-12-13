@@ -1,33 +1,50 @@
 package edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.home
 
+import android.Manifest
+import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
-import android.widget.*
 import android.view.*
+import android.widget.*
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
-import com.google.android.material.navigation.NavigationView
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.LandingActivity
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
-    private lateinit var signout_button : Button
-
+    private lateinit var signout_button: Button
+    private val RequestCameraID = 123
+    val CAMERA_REQUEST_CODE = 0
+    val fileName: String = UUID.randomUUID().toString()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,7 +52,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         homeViewModel =
-                ViewModelProvider(this).get(HomeViewModel::class.java)
+            ViewModelProvider(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
         /*val textView: TextView = root.findViewById(R.id.text_home)
         homeViewModel.text.observe(viewLifecycleOwner, Observer {
@@ -45,9 +62,106 @@ class HomeFragment : Fragment() {
         return root
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        Log.i("PERM", "Checking perm")
+        when (requestCode)	{
+            RequestCameraID -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i("PERM", "Permission granted")
+                }
+            }
+        }
+    }
+
+    fun uploadFile(key: String, fileUri : Uri) {
+        val storage = Firebase.storage
+        val storageRef = storage.getReference(key)
+
+        val uploadTask = storageRef.putFile(fileUri)
+
+        uploadTask.addOnFailureListener {
+            // Handle unsuccessful uploads
+        }.addOnSuccessListener { taskSnapshot ->
+            val downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl
+        }
+    }
+
+    private fun takePicture() {
+        val imageFile = File.createTempFile(fileName, ".jpg")
+
+        val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val imageUri = Uri.fromFile(imageFile);
+
+        // Write a message to the database
+        val database = Firebase.database
+        val myRef = database.getReference()
+        myRef.setValue(imageUri.toString())
+        uploadFile(fileName+ ".jpg", imageUri)
+
+        callCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+
+        startActivityForResult(callCameraIntent, CAMERA_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(
+        requestCode: Int, resultCode: Int,
+        intent: Intent?
+    ) {
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+            val bmp = intent?.extras?.get("data") as Bitmap
+
+            val storage = Firebase.storage
+            val storageRef = storage.getReference()
+            val myRef_temp = storageRef.child(fileName)
+            val baos = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            val data = baos.toByteArray()
+
+            var uploadTask = myRef_temp.putBytes(data)
+            uploadTask.addOnFailureListener {
+                // Handle unsuccessful uploads
+            }.addOnSuccessListener { taskSnapshot ->
+                // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+                // ...
+                val downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl
+                Log.i("UPLOAD", "$downloadUrl")
+            }
+            // Get the Uri of data
+            //val file_uri = intent.data
+            /*val img = requireActivity().findViewById<ImageView>(R.id.camera_image)
+            img.visibility = View.VISIBLE
+            img.setImageBitmap(bmp)*/
+
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         var viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        val fab: FloatingActionButton = requireActivity().findViewById(R.id.fab)
+        fab.visibility = View.VISIBLE
+        fab.setImageResource(R.drawable.ic_camera)
+        fab.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(
+                    requireActivity() as Context,
+                    Manifest.permission.CAMERA
+                )
+                ==	PackageManager.PERMISSION_GRANTED)	{
+                Log.i("PERM", "Have permission already")
+                Log.i("CAM", "Can take picture")
+                takePicture()
+            } else {
+                Log.i("PERM", "No permission yet")
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(Manifest.permission.CAMERA),
+                    RequestCameraID
+                );
+            }
+        }
 
         signout_button = requireActivity().findViewById(R.id.signout_button)
 
@@ -70,8 +184,10 @@ class HomeFragment : Fragment() {
         var text_view = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
         val languages = resources.getStringArray(R.array.Languages)
         val adapter = context?.let {
-            ArrayAdapter(it,
-                android.R.layout.simple_list_item_1, languages)
+            ArrayAdapter(
+                it,
+                android.R.layout.simple_list_item_1, languages
+            )
         }
         text_view.setAdapter(adapter)
 
@@ -84,16 +200,15 @@ class HomeFragment : Fragment() {
             var text = text_view.getText().toString()
             var quantity = quantity_view.getText().toString()
 
-            if(quantity.trim().length<=0 || text.trim().length<=0)
-            {
-                if(quantity.trim().length<=0 && text.trim().length<=0)
-                    Toast.makeText(context, "Please include item and quantity", Toast.LENGTH_LONG).show()
-                else if(text.trim().length<=0)
+            if (quantity.trim().length <= 0 || text.trim().length <= 0) {
+                if (quantity.trim().length <= 0 && text.trim().length <= 0)
+                    Toast.makeText(context, "Please include item and quantity", Toast.LENGTH_LONG)
+                        .show()
+                else if (text.trim().length <= 0)
                     Toast.makeText(context, "Please include item", Toast.LENGTH_SHORT).show()
-                else if(quantity.trim().length<=0)
+                else if (quantity.trim().length <= 0)
                     Toast.makeText(context, "Please include quantity", Toast.LENGTH_LONG).show()
-            }
-            else {
+            } else {
                 Log.d("input text", text)
                 Log.d("input quantity", quantity.toString())
 
@@ -106,27 +221,37 @@ class HomeFragment : Fragment() {
                         // This method is called once with the initial value and again
                         // whenever data at this location is updated.
                         if (dataSnapshot.hasChild(text)) {
-                            Log.d("input",
-                                    dataSnapshot.child(text)
-                                            .child("name").value.toString() + "for user: " + FirebaseAuth.getInstance().uid.toString()
+                            Log.d(
+                                "input",
+                                dataSnapshot.child(text)
+                                    .child("name").value.toString() + "for user: " + FirebaseAuth.getInstance().uid.toString()
                             )
                             // generate new uid for entry if the item is in the db items table
                             var uuid = UUID.randomUUID()
                             Log.d("UUID", uuid.toString())
                             // add item name to users item log
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("name").setValue(text)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                .child("items").child(uuid.toString()).child("name").setValue(text)
                             // add item iid to users item log
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("iid").setValue(dataSnapshot.child(text).child("iid").value.toString())
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                .child("items").child(uuid.toString()).child("iid")
+                                .setValue(dataSnapshot.child(text).child("iid").value.toString())
                             // add item expiration date (current time + shelf life) to users item log
-                            var shelfLife = dataSnapshot.child(text).child("shelf_life").value.toString().toInt()
+                            var shelfLife =
+                                dataSnapshot.child(text).child("shelf_life").value.toString()
+                                    .toInt()
                             var expiration = viewModel.calculateExpiration(shelfLife)
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("expiration_date").setValue(expiration)
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("quantity").setValue(quantity)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                .child("items").child(uuid.toString()).child("expiration_date")
+                                .setValue(expiration)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
+                                .child("items").child(uuid.toString()).child("quantity")
+                                .setValue(quantity)
 
                             text_view.setText(null)
                             quantity_view.setText(null)
 
-                            var msg = quantity + " " + text +"(s) added to your fridge!"
+                            var msg = quantity + " " + text + "(s) added to your fridge!"
                             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
 
                         } else {
@@ -140,12 +265,11 @@ class HomeFragment : Fragment() {
                     }
                 })
             }
+        }
     }
-  
     private val CHANNEL_ID = "spoil_alert_id"
     private val notificationId = 101
-    private fun sendNotification()
-    {
+    private fun sendNotification() {
         val builder = context?.let {
             NotificationCompat.Builder(it, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_kitchen_24px)
@@ -155,10 +279,9 @@ class HomeFragment : Fragment() {
         }
 
         if (builder != null) {
-            with(context?.let { NotificationManagerCompat.from(it) }){
+            with(context?.let { NotificationManagerCompat.from(it) }) {
                 this?.notify(notificationId, builder.build())
             }
         }
     }
-
 }
