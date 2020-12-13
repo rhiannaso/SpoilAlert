@@ -208,14 +208,4 @@ class HomeFragment : Fragment() {
 
         return nid
     }
-
-    fun cancelAlarm(nid: Int) {
-        val alarmManager = activity?.getSystemService(ALARM_SERVICE) as AlarmManager
-        val myIntent = Intent(activity,
-            NotificationPublisher::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
-            activity, nid, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        alarmManager.cancel(pendingIntent)
-    }
 }

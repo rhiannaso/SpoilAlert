@@ -67,7 +67,7 @@ class HouseFridgeFragment : Fragment() {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             for (snapshot in dataSnapshot.children) {
                                 val format = SimpleDateFormat("MM/dd/yyyy")
-                                val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(), format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString())
+                                val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(), format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString(), snapshot.child("nid").value.toString())
                                 item_list.add(item)
                             }
                             item_list = item_list.sortedWith(compareBy({ it.item_expiration })).toMutableList()
