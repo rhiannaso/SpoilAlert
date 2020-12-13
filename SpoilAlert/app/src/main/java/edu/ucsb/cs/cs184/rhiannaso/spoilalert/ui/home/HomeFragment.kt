@@ -8,9 +8,13 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.StrictMode
 import android.provider.MediaStore
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -20,13 +24,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -81,15 +82,23 @@ class HomeFragment : Fragment() {
         val storageRef = storage.getReference(key)
 
         val uploadTask = storageRef.putFile(fileUri)
+        Log.i("UPLOAD", "Hello")
+        uploadTask.addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                val downloadUrl = task.result
+                Log.i("UPLOAD", "$downloadUrl")
+                Toast.makeText(context, downloadUrl.toString(), Toast.LENGTH_LONG).show()
 
-        uploadTask.addOnFailureListener {
-            // Handle unsuccessful uploads
-        }.addOnSuccessListener { taskSnapshot ->
-            val downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl
+            } else{
+                Log.i("UPLOAD", "whoops")
+            }
         }
     }
 
     private fun takePicture() {
+        val builder: StrictMode.VmPolicy.Builder = StrictMode.VmPolicy.Builder()
+        StrictMode.setVmPolicy(builder.build())
+
         val imageFile = File.createTempFile(fileName, ".jpg")
 
         val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -97,7 +106,7 @@ class HomeFragment : Fragment() {
 
         // Write a message to the database
         val database = Firebase.database
-        val myRef = database.getReference()
+        val myRef = database.getReference().child("tempFile")
         myRef.setValue(imageUri.toString())
         uploadFile(fileName+ ".jpg", imageUri)
 
@@ -122,11 +131,13 @@ class HomeFragment : Fragment() {
 
             var uploadTask = myRef_temp.putBytes(data)
             uploadTask.addOnFailureListener {
+                Toast.makeText(context, "RIP", Toast.LENGTH_LONG).show()
                 // Handle unsuccessful uploads
             }.addOnSuccessListener { taskSnapshot ->
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
                 // ...
                 val downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl
+                Toast.makeText(context, downloadUrl.toString(), Toast.LENGTH_LONG).show()
                 Log.i("UPLOAD", "$downloadUrl")
             }
             // Get the Uri of data
