@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.StrictMode
 import android.provider.MediaStore
+import android.text.Editable
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -23,6 +24,9 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import clarifai2.api.ClarifaiBuilder
+import clarifai2.dto.input.ClarifaiImage
+import clarifai2.dto.input.ClarifaiInput
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
@@ -139,6 +143,7 @@ class HomeFragment : Fragment() {
                 val downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl
                 Toast.makeText(context, downloadUrl.toString(), Toast.LENGTH_LONG).show()
                 Log.i("UPLOAD", "$downloadUrl")
+                checkWithClarifai(downloadUrl.toString())
             }
             // Get the Uri of data
             //val file_uri = intent.data
@@ -147,6 +152,32 @@ class HomeFragment : Fragment() {
             img.setImageBitmap(bmp)*/
 
         }
+    }
+
+    fun checkWithClarifai(downloadUrl : String) {
+        Log.i("CLARIFAI", "Checking with clarifai")
+        val APIKey = "020d8722b0f0431aa162dea9b7bd5b9e"
+        val client = ClarifaiBuilder(APIKey).buildSync()
+
+        val token = client.token
+
+        val result = client.getDefaultModels().foodModel()// You can also do Clarifai.getModelByID("id") to get custom models
+            .predict()
+            .withInputs(
+                ClarifaiInput.forImage(ClarifaiImage.of(downloadUrl))
+            )
+            .executeSync() // optionally, pass a ClarifaiClient parameter to override the default client instance with another one
+            .get();
+
+        val data = result.first().data()
+        val foodName = data[0].name()
+        Log.i("Food name", foodName.toString())
+
+        val foodView = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
+        foodView.text = foodName as Editable
+
+        // Setting details on UI
+        //nameOfFood.setText("Food: ${foodName}")
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
