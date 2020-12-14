@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
 import android.text.Editable
@@ -35,13 +37,14 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.LandingActivity
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
+
 
 class HomeFragment : Fragment() {
 
@@ -50,6 +53,9 @@ class HomeFragment : Fragment() {
     private val RequestCameraID = 123
     val CAMERA_REQUEST_CODE = 0
     val fileName: String = UUID.randomUUID().toString()
+    //val photoFileName: String = "photo0000.jpg"
+    lateinit var imageFilePath : String
+    lateinit var bitmapImage : Bitmap
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,7 +87,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun uploadFile(key: String, fileUri : Uri) {
+    fun uploadFile(key: String, fileUri: Uri) {
         val storage = Firebase.storage
         val storageRef = storage.getReference(key)
 
@@ -99,24 +105,85 @@ class HomeFragment : Fragment() {
         }
     }
 
+    fun sanitiseKey(fileName: String) : String {
+        val fileNameClean = fileName.split("/");
+        val fileNameCleanAgain = fileNameClean[fileNameClean.size - 1].replace(".", "").replace(
+            "jpg",
+            ""
+        )
+
+        return fileNameCleanAgain
+    }
+
     private fun takePicture() {
         val builder: StrictMode.VmPolicy.Builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
-        val imageFile = File.createTempFile(fileName, ".jpg")
+        //val imageFile = File.createTempFile(fileName, ".jpg")
+        val imageFile = createImageFile()
 
         val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val imageUri = Uri.fromFile(imageFile);
+        //val imageUri = Uri.fromFile(imageFile);
 
         // Write a message to the database
-        val database = Firebase.database
+        //val imageUri = getPhotoFileUri(fileName+".jpg")
+        //val imageUri = getPhotoFileUri(photoFileName)
+        /*val database = Firebase.database
         val myRef = database.getReference().child("tempFile")
         myRef.setValue(imageUri.toString())
-        uploadFile(fileName+ ".jpg", imageUri)
+        //uploadFile(fileName + ".jpg", imageUri!!)
+        uploadFile(photoFileName, imageUri!!)*/
 
-        callCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        //callCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
 
-        startActivityForResult(callCameraIntent, CAMERA_REQUEST_CODE)
+        Log.i("CAM", "Going to take picture")
+        if (callCameraIntent.resolveActivity(requireActivity().packageManager) != null) {
+            val imageUri = Uri.fromFile(imageFile);
+            val fileNameCleanAgain = sanitiseKey(imageUri.toString())
+
+            // Write a message to the database
+            val database = Firebase.database
+            val myRef = database.getReference(fileNameCleanAgain.toString())
+            myRef.setValue(imageUri.toString())
+
+            uploadFile(fileNameCleanAgain + ".jpg", imageUri)
+
+            callCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+
+            startActivityForResult(callCameraIntent, CAMERA_REQUEST_CODE);
+        }
+    }
+
+    private fun createImageFile(): File {
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timestamp + "_"
+        val storageDirectory = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        if (!storageDirectory?.exists()!!) {
+            // mkdirs() function used instead of mkdir() to create any parent directory that does
+            // not exist.
+
+            storageDirectory.mkdirs()
+        } else {
+            println("Directory exists!");
+        }
+
+        val imageFile = File.createTempFile(imageFileName, ".jpg", storageDirectory)
+        imageFilePath = imageFile.absolutePath
+
+        return imageFile
+    }
+
+    fun setScaledBitmap(): Bitmap {
+        val bmOptions = BitmapFactory.Options()
+        bmOptions.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(imageFilePath, bmOptions)
+
+        val scaleFactor = 1
+        bmOptions.inSampleSize = scaleFactor
+        bmOptions.inJustDecodeBounds = false
+
+        return BitmapFactory.decodeFile(imageFilePath, bmOptions)
     }
 
     override fun onActivityResult(
@@ -124,14 +191,26 @@ class HomeFragment : Fragment() {
         intent: Intent?
     ) {
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
-            val bmp = intent?.extras?.get("data") as Bitmap
+            Log.i("ACTIVITY RESULT", "In here")
+            //val bmp = intent?.extras?.get("data") as Bitmap
+
+            //val takenPhotoUri = getPhotoFileUri(fileName+".jpg")
+            /*val takenPhotoUri = getPhotoFileUri(photoFileName)
+            val takenImage = BitmapFactory.decodeFile(takenPhotoUri!!.path)*/
+
+            val img = requireActivity().findViewById<ImageView>(R.id.camera_image)
+            //img.setImageBitmap(takenImage)
+
+            bitmapImage = setScaledBitmap()
+            val baos = ByteArrayOutputStream()
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            val data = baos.toByteArray()
 
             val storage = Firebase.storage
-            val storageRef = storage.getReference()
-            val myRef_temp = storageRef.child(fileName)
-            val baos = ByteArrayOutputStream()
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-            val data = baos.toByteArray()
+            val storageRef = storage.reference
+            //val myRef_temp = storageRef.child(fileName+".jpg")
+            //val myRef_temp = storageRef.child(photoFileName)
+            val myRef_temp = storageRef.child("food.jpg")
 
             var uploadTask = myRef_temp.putBytes(data)
             uploadTask.addOnFailureListener {
@@ -142,7 +221,7 @@ class HomeFragment : Fragment() {
                 // ...
                 val downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl
                 Toast.makeText(context, downloadUrl.toString(), Toast.LENGTH_LONG).show()
-                Log.i("UPLOAD", "$downloadUrl")
+                Log.i("Activity Result", "$downloadUrl")
                 checkWithClarifai(downloadUrl.toString())
             }
             // Get the Uri of data
@@ -151,22 +230,25 @@ class HomeFragment : Fragment() {
             img.visibility = View.VISIBLE
             img.setImageBitmap(bmp)*/
 
+        } else {
+            Log.i("ACTIVITY RESULT", "Something went wrong")
         }
     }
 
-    fun checkWithClarifai(downloadUrl : String) {
+    fun checkWithClarifai(downloadUrl: String) {
         Log.i("CLARIFAI", "Checking with clarifai")
         val APIKey = "020d8722b0f0431aa162dea9b7bd5b9e"
         val client = ClarifaiBuilder(APIKey).buildSync()
 
-        val token = client.token
-
-        val result = client.getDefaultModels().foodModel()// You can also do Clarifai.getModelByID("id") to get custom models
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+        val result = client.defaultModels.foodModel()
             .predict()
             .withInputs(
-                ClarifaiInput.forImage(ClarifaiImage.of(downloadUrl))
+                //ClarifaiInput.forImage(ClarifaiImage.of(downloadUrl))
+                ClarifaiInput.forImage(ClarifaiImage.of("https://firebasestorage.googleapis.com/v0/b/spoilalert-7c0e6.appspot.com/o/mountains.jpg?alt=media&token=4e89e757-ad7d-4b01-bd08-5ff70123f566"))
             )
-            .executeSync() // optionally, pass a ClarifaiClient parameter to override the default client instance with another one
+            .executeSync()
             .get();
 
         val data = result.first().data()
@@ -174,10 +256,7 @@ class HomeFragment : Fragment() {
         Log.i("Food name", foodName.toString())
 
         val foodView = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
-        foodView.text = foodName as Editable
-
-        // Setting details on UI
-        //nameOfFood.setText("Food: ${foodName}")
+        foodView.setText(foodName)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
