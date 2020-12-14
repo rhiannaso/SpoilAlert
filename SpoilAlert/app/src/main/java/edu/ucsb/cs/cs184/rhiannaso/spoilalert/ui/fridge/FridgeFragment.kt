@@ -1,6 +1,9 @@
 package edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.fridge
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +25,7 @@ import com.google.firebase.ktx.Firebase
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ItemAdapter
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ItemCard
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.NotificationPublisher
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.house_fridge.HouseFridgeFragment
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.house_fridge.HouseFridgeViewModel
 import java.text.SimpleDateFormat
@@ -72,6 +76,7 @@ class FridgeFragment : Fragment() {
                 //Remove swiped item from list and notify the RecyclerView
                 val position = viewHolder.adapterPosition
                 myRef_user.child(item_list[position].eid).removeValue()
+                cancelAlarm(item_list[position].nid.toInt())
                 Log.d("onSwiped", item_list.toString() + " " + position.toString())
                 item_list.removeAt(position)
                 adapter.notifyItemRemoved(position)
@@ -122,7 +127,7 @@ class FridgeFragment : Fragment() {
                 for (snapshot in dataSnapshot.children) {
                     Log.d("in items snapshot", snapshot.getValue().toString())
                     val format = SimpleDateFormat("MM/dd/yyyy")
-                    val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(), format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString())
+                    val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(), format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString(), snapshot.child("nid").value.toString())
                     Log.d("in items snapshot", item.toString())
                     item_list.add(item)
                     Log.d("in items snapshot", item_list.toString())
@@ -152,5 +157,15 @@ class FridgeFragment : Fragment() {
 
     private fun compressExpiration(expiration : String) : String {
         return expiration.substring(expiration.length-22, expiration.length-12)
+    }
+
+    fun cancelAlarm(nid: Int) {
+        val alarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val myIntent = Intent(activity,
+                NotificationPublisher::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+                activity, nid, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        alarmManager.cancel(pendingIntent)
     }
 }
