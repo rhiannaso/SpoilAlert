@@ -19,15 +19,42 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/item_quantity"
+            android:id="@+id/item_quantity1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/item_name"
             android:gravity="center_vertical"
             android:paddingLeft="20dp"
-            android:text="Quantity: 2"
+            android:text="Quantity: "
             android:textColor="@android:color/holo_green_dark"
             android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/item_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_name"
+            android:layout_toRightOf="@+id/minus_quantity"
+            android:gravity="center_vertical"
+            android:text="2"
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="15dp" />
+
+        <ImageButton
+            android:id="@+id/minus_quantity"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_remove_24px"
+            android:layout_toRightOf="@+id/item_quantity1"
+            android:layout_below="@+id/item_name"/>
+
+        <ImageButton
+            android:id="@+id/plus_quantity"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_add_24px"
+            android:layout_toRightOf="@+id/item_quantity"
+            android:layout_below="@+id/item_name"/>
 
         <TextView
             android:id="@+id/item_expiration"
@@ -41,6 +68,8 @@
             android:textColor="@android:color/holo_green_dark"
             android:textSize="25dp"
             android:textStyle="bold" />
+
+
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>
