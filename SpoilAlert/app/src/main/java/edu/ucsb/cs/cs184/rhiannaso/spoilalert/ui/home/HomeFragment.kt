@@ -55,8 +55,6 @@ class HomeFragment : Fragment() {
     private lateinit var signout_button: Button
     private val RequestCameraID = 123
     val CAMERA_REQUEST_CODE = 0
-    val fileName: String = UUID.randomUUID().toString()
-    //val photoFileName: String = "photo0000.jpg"
     lateinit var imageFilePath : String
     lateinit var bitmapImage : Bitmap
 
@@ -68,10 +66,6 @@ class HomeFragment : Fragment() {
         homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        /*val textView: TextView = root.findViewById(R.id.text_home)
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })*/
 
         return root
     }
@@ -95,15 +89,12 @@ class HomeFragment : Fragment() {
         val storageRef = storage.getReference(key)
 
         val uploadTask = storageRef.putFile(fileUri)
-        Log.i("UPLOAD", "Hello")
         uploadTask.addOnCompleteListener { task ->
             if(task.isSuccessful){
                 val downloadUrl = task.result
-                Log.i("UPLOAD", "$downloadUrl")
-                Toast.makeText(context, downloadUrl.toString(), Toast.LENGTH_LONG).show()
-
+                Log.i("UPLOAD FILE", "$downloadUrl")
             } else{
-                Log.i("UPLOAD", "whoops")
+                Log.i("UPLOAD FILE", "Something went wrong")
             }
         }
     }
@@ -114,7 +105,6 @@ class HomeFragment : Fragment() {
             "jpg",
             ""
         )
-
         return fileNameCleanAgain
     }
 
@@ -122,34 +112,21 @@ class HomeFragment : Fragment() {
         val builder: StrictMode.VmPolicy.Builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
-        //val imageFile = File.createTempFile(fileName, ".jpg")
         val imageFile = createImageFile()
 
         val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        //val imageUri = Uri.fromFile(imageFile);
 
-        // Write a message to the database
-        //val imageUri = getPhotoFileUri(fileName+".jpg")
-        //val imageUri = getPhotoFileUri(photoFileName)
-        /*val database = Firebase.database
-        val myRef = database.getReference().child("tempFile")
-        myRef.setValue(imageUri.toString())
-        //uploadFile(fileName + ".jpg", imageUri!!)
-        uploadFile(photoFileName, imageUri!!)*/
-
-        //callCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-
-        Log.i("CAM", "Going to take picture")
         if (callCameraIntent.resolveActivity(requireActivity().packageManager) != null) {
             val imageUri = Uri.fromFile(imageFile);
             val fileNameCleanAgain = sanitiseKey(imageUri.toString())
 
             // Write a message to the database
             val database = Firebase.database
-            val myRef = database.getReference(fileNameCleanAgain.toString())
+            val dbRef = database.getReference("files")
+            val myRef = dbRef.child(fileNameCleanAgain)
             myRef.setValue(imageUri.toString())
 
-            uploadFile(fileNameCleanAgain + ".jpg", imageUri)
+            uploadFile("$fileNameCleanAgain.jpg", imageUri)
 
             callCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
 
@@ -163,9 +140,6 @@ class HomeFragment : Fragment() {
         val storageDirectory = requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
         if (!storageDirectory?.exists()!!) {
-            // mkdirs() function used instead of mkdir() to create any parent directory that does
-            // not exist.
-
             storageDirectory.mkdirs()
         } else {
             println("Directory exists!");
@@ -194,16 +168,8 @@ class HomeFragment : Fragment() {
         intent: Intent?
     ) {
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
-            Log.i("ACTIVITY RESULT", "In here")
-            //val bmp = intent?.extras?.get("data") as Bitmap
-
-            //val takenPhotoUri = getPhotoFileUri(fileName+".jpg")
-            /*val takenPhotoUri = getPhotoFileUri(photoFileName)
-            val takenImage = BitmapFactory.decodeFile(takenPhotoUri!!.path)*/
-
-            //val img = requireActivity().findViewById<ImageView>(R.id.camera_image)
-            //img.setImageBitmap(takenImage)
-
+            val foodView = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
+            foodView.hint = getString(R.string.wait_msg)
             bitmapImage = setScaledBitmap()
             val baos = ByteArrayOutputStream()
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos)
@@ -211,35 +177,22 @@ class HomeFragment : Fragment() {
 
             val storage = FirebaseStorage.getInstance()
             val storageRef = storage.getReference()
-            //val myRef_temp = storageRef.child(fileName+".jpg")
-            //val myRef_temp = storageRef.child(photoFileName)
-            val myRef_temp = storageRef.child("food.jpg")
-            //val myRef_temp = storage.getReference("food.jpg")
+            val fileName = UUID.randomUUID().toString()
+            val myRef_temp = storageRef.child("${fileName}.jpg")
 
             var uploadTask = myRef_temp.putBytes(data)
             uploadTask.addOnFailureListener {
-                Toast.makeText(context, "RIP", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Something went wrong on upload", Toast.LENGTH_LONG).show()
                 // Handle unsuccessful uploads
             }.addOnSuccessListener { taskSnapshot ->
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
                 // ...
-                val downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl
-                val dURL = myRef_temp.downloadUrl.addOnSuccessListener{
+                myRef_temp.downloadUrl.addOnSuccessListener{
                     url ->
                     Log.i("Activity Result", "$url")
                     checkWithClarifai(url.toString())
-
                 }
-                /*Toast.makeText(context, dURL.toString(), Toast.LENGTH_LONG).show()
-                Log.i("Activity Result", "$dURL")
-                Log.i("Activity Result", "$myRef_temp")
-                checkWithClarifai(myRef_temp.toString())*/
             }
-            // Get the Uri of data
-            //val file_uri = intent.data
-            /*val img = requireActivity().findViewById<ImageView>(R.id.camera_image)
-            img.visibility = View.VISIBLE
-            img.setImageBitmap(bmp)*/
 
         } else {
             Log.i("ACTIVITY RESULT", "Something went wrong")
@@ -257,7 +210,6 @@ class HomeFragment : Fragment() {
             .predict()
             .withInputs(
                 ClarifaiInput.forImage(ClarifaiImage.of(downloadUrl))
-                //ClarifaiInput.forImage(ClarifaiImage.of("https://firebasestorage.googleapis.com/v0/b/spoilalert-7c0e6.appspot.com/o/mountains.jpg?alt=media&token=4e89e757-ad7d-4b01-bd08-5ff70123f566"))
             )
             .executeSync()
             .get();
@@ -265,6 +217,9 @@ class HomeFragment : Fragment() {
         val data = result.first().data()
         val foodName = data[0].name()
         Log.i("Food name", foodName.toString())
+        var successMsg = Toast.makeText(context, "Item successfully processed!", Toast.LENGTH_LONG)
+        successMsg.setGravity(Gravity.CENTER, 0, 0)
+        successMsg.show()
 
         val foodView = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
         foodView.setText(foodName)
@@ -273,17 +228,14 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         var viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        val fab: FloatingActionButton = requireActivity().findViewById(R.id.fab)
-        fab.visibility = View.VISIBLE
-        fab.setImageResource(R.drawable.ic_camera)
-        fab.setOnClickListener {
+        val cam_btn = requireActivity().findViewById<ImageView>(R.id.cam_btn)
+        cam_btn.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
                     requireActivity() as Context,
                     Manifest.permission.CAMERA
                 )
                 ==	PackageManager.PERMISSION_GRANTED)	{
                 Log.i("PERM", "Have permission already")
-                Log.i("CAM", "Can take picture")
                 takePicture()
             } else {
                 Log.i("PERM", "No permission yet")
@@ -383,9 +335,10 @@ class HomeFragment : Fragment() {
                             text_view.setText(null)
                             quantity_view.setText(null)
 
-                            var msg = quantity + " " + text + "(s) added to your fridge!"
+                            var msg = "$quantity $text(s) added to your fridge!"
                             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-
+                            val foodView = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
+                            foodView.hint = getString(R.string.log_hint)
                         } else {
                             Log.d("input", "input item does not exist in items table")
                         }
