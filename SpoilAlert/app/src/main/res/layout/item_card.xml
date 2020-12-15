@@ -60,14 +60,21 @@
             android:id="@+id/item_expiration"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:layout_alignParentRight="true"
             android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="20dp"
-            android:text="12/18/2020"
+            android:layout_toRightOf="@+id/item_name"
+            android:layout_marginLeft="110dp"
+            android:text="Dec 18, 2020"
             android:textColor="@android:color/holo_green_dark"
             android:textSize="25dp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/item_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/item_expiration"
+            android:src="@drawable/ic_more_vert_24px"/>
 
 
     </RelativeLayout>
