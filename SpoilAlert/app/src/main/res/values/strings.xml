@@ -48,4 +48,5 @@
     <string name="house_input_hint">Unique Username</string>
     <string name="leave_house">LEAVE</string>
     <string name="house_members">House Members</string>
+    <string name="wait_msg">Processing Image...</string>
 </resources>

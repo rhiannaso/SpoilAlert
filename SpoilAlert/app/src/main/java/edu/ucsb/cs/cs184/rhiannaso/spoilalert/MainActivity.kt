@@ -1,10 +1,12 @@
 package edu.ucsb.cs.cs184.rhiannaso.spoilalert
 
+import android.Manifest
 import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -14,8 +16,10 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -56,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
-        fab.visibility = View.GONE // TODO/TEMP: while we don't need FAB
+        fab.visibility = View.GONE
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
@@ -66,7 +70,6 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.nav_home,
 //                R.id.nav_fridge,
-                R.id.nav_store,
                 R.id.nav_join_house,
 //                R.id.nav_members,
 //                R.id.nav_house_fridge
