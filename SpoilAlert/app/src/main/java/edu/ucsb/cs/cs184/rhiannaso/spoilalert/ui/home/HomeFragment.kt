@@ -2,7 +2,10 @@ package edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.home
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -22,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -39,9 +43,11 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.LandingActivity
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.NotificationPublisher
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -288,8 +294,7 @@ class HomeFragment : Fragment() {
 
             if (quantity.trim().length <= 0 || text.trim().length <= 0) {
                 if (quantity.trim().length <= 0 && text.trim().length <= 0)
-                    Toast.makeText(context, "Please include item and quantity", Toast.LENGTH_LONG)
-                        .show()
+                    Toast.makeText(context, "Please include item and quantity", Toast.LENGTH_LONG).show()
                 else if (text.trim().length <= 0)
                     Toast.makeText(context, "Please include item", Toast.LENGTH_SHORT).show()
                 else if (quantity.trim().length <= 0)
@@ -319,25 +324,24 @@ class HomeFragment : Fragment() {
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                     .child("items").child(uuid.toString()).child("name").setValue(text)
                             // add item iid to users item log
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                    .child("items").child(uuid.toString()).child("iid")
-                                    .setValue(dataSnapshot.child(text).child("iid").value.toString())
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("iid").setValue(dataSnapshot.child(text).child("iid").value.toString())
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("eid").setValue(uuid.toString())
                             // add item expiration date (current time + shelf life) to users item log
                             var shelfLife =
                                     dataSnapshot.child(text).child("shelf_life").value.toString()
                                             .toInt()
                             var expiration = viewModel.calculateExpiration(shelfLife)
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                    .child("items").child(uuid.toString()).child("expiration_date")
-                                    .setValue(expiration)
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                    .child("items").child(uuid.toString()).child("quantity")
-                                    .setValue(quantity)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("expiration_date").setValue(expiration)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("quantity").setValue(quantity)
+                            //Id used for notification and requestCode
+                            val nid = setNotificationTime(text, expiration)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("nid").setValue(nid)
 
                             text_view.setText(null)
                             quantity_view.setText(null)
 
                             var msg = "$quantity $text(s) added to your fridge!"
+
                             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                             val foodView = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
                             foodView.hint = getString(R.string.log_hint)
@@ -370,5 +374,42 @@ class HomeFragment : Fragment() {
                 this?.notify(notificationId, builder.build())
             }
         }
+    }
+
+    //sets an alarm to send a notification
+    private fun setNotificationTime(itemName: String, date: String) : Int {
+        val format = SimpleDateFormat("EEEE, MM/dd/yyyy 'at' h:mm a")
+        var d: Date = Date()
+        try {
+            d = format.parse(date)
+        } catch (e : ParseException) {
+            Log.d("HomeFragment", e.message!!)
+        }
+
+        val c = Calendar.getInstance()
+        //nid will be used for both notification-id along with requestCode
+        val nid = Integer.parseInt(SimpleDateFormat("ddHHmmssSS", Locale.US).format(c.time))
+
+        //create notification
+        val n = NotificationCompat.Builder(requireActivity(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_kitchen_24px)
+                .setContentTitle("$itemName expiring soon!")
+                .setContentText("$itemName expiring within a day! Try to eat them if you can!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        //create intent and pendingIntent
+        val notificationIntent = Intent(activity, NotificationPublisher::class.java)
+        notificationIntent.putExtra("notification-id", nid)
+        notificationIntent.putExtra("notification", n.build())
+        val pIntent = PendingIntent.getBroadcast(activity, nid, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        //set alarm
+        c.time = d
+//        c.add(Calendar.SECOND, 5)
+        val futureInMillis = c.timeInMillis
+        val aM = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        aM.set(AlarmManager.RTC_WAKEUP, futureInMillis, pIntent)
+
+        return nid
     }
 }

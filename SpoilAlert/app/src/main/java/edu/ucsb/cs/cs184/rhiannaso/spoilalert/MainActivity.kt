@@ -69,9 +69,10 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home,
-                R.id.nav_fridge,
+//                R.id.nav_fridge,
                 R.id.nav_join_house,
-                R.id.nav_members
+//                R.id.nav_members,
+//                R.id.nav_house_fridge
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -124,11 +125,14 @@ class MainActivity : AppCompatActivity() {
                             houseIdView.text = "In House: ${house.key}"
                             currHouse = house.key.toString()
                             nav_menu.findItem(R.id.nav_join_house).isVisible = false
+                            nav_menu.findItem(R.id.nav_house_fridge).isVisible = true
                             nav_menu.findItem(R.id.nav_members).isVisible = true
+                            break
                         } else {
                             Log.i("checkIfInHouse", "User not in house")
                             houseIdView.text = ""
                             nav_menu.findItem(R.id.nav_join_house).isVisible = true
+                            nav_menu.findItem(R.id.nav_house_fridge).isVisible = false
                             nav_menu.findItem(R.id.nav_members).isVisible = false
                         }
                     }

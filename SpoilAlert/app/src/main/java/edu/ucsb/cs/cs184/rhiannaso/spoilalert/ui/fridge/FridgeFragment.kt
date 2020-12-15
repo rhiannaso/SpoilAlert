@@ -1,12 +1,16 @@
 package edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.fridge
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -19,27 +23,29 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ItemAdapter
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ItemCard
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.NotificationPublisher
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.house_fridge.HouseFridgeFragment
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.house_fridge.HouseFridgeViewModel
 import java.text.SimpleDateFormat
 
 
 class FridgeFragment : Fragment() {
 
-    private lateinit var fridgeViewModel: FridgeViewModel
+    companion object {
+        fun newInstance() = FridgeFragment()
+    }
+
+    private lateinit var viewModel: FridgeViewModel
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
+            inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        fridgeViewModel =
-                ViewModelProvider(this).get(FridgeViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_fridge, container, false)
-//        val textView: TextView = root.findViewById(R.id.text_fridge)
-//        fridgeViewModel.text.observe(viewLifecycleOwner, Observer {
-//            textView.text = it
-//        })
-        return root
+        return inflater.inflate(R.layout.fragment_fridge, container, false)
     }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -48,6 +54,7 @@ class FridgeFragment : Fragment() {
         var adapter : ItemAdapter = ItemAdapter(item_list)
 
         val recycler_view = requireActivity().findViewById<RecyclerView>(R.id.recycler_view)
+        var empty_tv = requireActivity().findViewById<TextView>(R.id.fridge_empty)
 
         val database = Firebase.database
         val myRef_user = database.getReference("users").child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items")
@@ -69,6 +76,7 @@ class FridgeFragment : Fragment() {
                 //Remove swiped item from list and notify the RecyclerView
                 val position = viewHolder.adapterPosition
                 myRef_user.child(item_list[position].eid).removeValue()
+                cancelAlarm(item_list[position].nid.toInt())
                 Log.d("onSwiped", item_list.toString() + " " + position.toString())
                 item_list.removeAt(position)
                 adapter.notifyItemRemoved(position)
@@ -119,7 +127,7 @@ class FridgeFragment : Fragment() {
                 for (snapshot in dataSnapshot.children) {
                     Log.d("in items snapshot", snapshot.getValue().toString())
                     val format = SimpleDateFormat("MM/dd/yyyy")
-                    val item = ItemCard(snapshot.child("name").value.toString(), "1", format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString())
+                    val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(), format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString(), snapshot.child("nid").value.toString())
                     Log.d("in items snapshot", item.toString())
                     item_list.add(item)
                     Log.d("in items snapshot", item_list.toString())
@@ -127,6 +135,12 @@ class FridgeFragment : Fragment() {
                 Log.d("before sort", item_list.toString())
                 item_list = item_list.sortedWith(compareBy({ it.item_expiration })).toMutableList()
                 Log.d("after sort", item_list.toString())
+                if (item_list.size > 0) {
+                    empty_tv.visibility = TextView.INVISIBLE
+                }
+                else if (item_list.size == 0) {
+                    empty_tv.visibility = TextView.VISIBLE
+                }
                 adapter = ItemAdapter(item_list)
                 recycler_view.adapter = adapter
                 adapter.notifyDataSetChanged()
@@ -143,5 +157,15 @@ class FridgeFragment : Fragment() {
 
     private fun compressExpiration(expiration : String) : String {
         return expiration.substring(expiration.length-22, expiration.length-12)
+    }
+
+    fun cancelAlarm(nid: Int) {
+        val alarmManager = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val myIntent = Intent(activity,
+                NotificationPublisher::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+                activity, nid, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        alarmManager.cancel(pendingIntent)
     }
 }

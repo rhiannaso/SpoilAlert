@@ -48,7 +48,10 @@ class MemberRecyclerAdapter(private val memberNames : MutableList<String>,
                     val navigationView = originalActivity.findViewById<View>(R.id.nav_view) as NavigationView
                     val nav_menu: Menu = navigationView.menu
                     nav_menu.findItem(R.id.nav_join_house).isVisible = true
+                    nav_menu.findItem(R.id.nav_house_fridge).isVisible = false
                     nav_menu.findItem(R.id.nav_members).isVisible = false
+                    memberNames.removeAt(i)
+                    notifyItemRemoved(i)
                 }
                 override fun onCancelled(error: DatabaseError) {
                     // Failed to read value

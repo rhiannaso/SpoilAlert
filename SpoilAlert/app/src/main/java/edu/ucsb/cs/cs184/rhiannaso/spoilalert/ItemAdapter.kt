@@ -1,21 +1,18 @@
-package edu.ucsb.cs.cs184.rhiannaso.spoilalert.ui.fridge
+package edu.ucsb.cs.cs184.rhiannaso.spoilalert
 
-import android.text.Layout
+import android.content.Context
+import android.media.Image
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
-import java.util.*
 
 class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
@@ -25,16 +22,29 @@ class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.A
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_card, parent, false)
-        Log.d("adapter", "in onBindViewHolder adapter")
         return ItemViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        val database = Firebase.database
+        val myRef_item = database.getReference("users").child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(itemList[position].eid)
         val cur_item = itemList[position]
         holder.item_name.setText(cur_item.item_name)
-        holder.item_quantity.setText("Quantity: " + cur_item.item_quantity)
+        holder.item_quantity.setText(cur_item.item_quantity)
         Log.d("cur_item.expiration", cur_item.item_expiration.toString())
         holder.item_expiration.setText(compressExpiration(cur_item.item_expiration.toString()))
+        holder.item_minus_button.setOnClickListener {
+            if (itemList[position].item_quantity.toInt() > 1) {
+                itemList[position].item_quantity = (itemList[position].item_quantity.toInt()-1).toString()
+                myRef_item.child("quantity").setValue(itemList[position].item_quantity.toString())
+                notifyItemChanged(position)
+            }
+        }
+        holder.item_plus_button.setOnClickListener {
+            itemList[position].item_quantity = (itemList[position].item_quantity.toInt()+1).toString()
+            myRef_item.child("quantity").setValue(itemList[position].item_quantity.toString())
+            notifyItemChanged(position)
+        }
 
         Log.d("adapter", "in onBindViewHolder adapter")
     }
@@ -48,5 +58,7 @@ class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.A
         val item_name : TextView = itemView.findViewById(R.id.item_name)
         val item_quantity : TextView = itemView.findViewById(R.id.item_quantity)
         val item_expiration : TextView = itemView.findViewById(R.id.item_expiration)
+        val item_minus_button : ImageButton = itemView.findViewById(R.id.minus_quantity)
+        val item_plus_button : ImageButton = itemView.findViewById(R.id.plus_quantity)
     }
 }
