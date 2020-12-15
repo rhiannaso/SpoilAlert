@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
-import android.text.Editable
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -29,10 +28,7 @@ import androidx.lifecycle.ViewModelProvider
 import clarifai2.api.ClarifaiBuilder
 import clarifai2.dto.input.ClarifaiImage
 import clarifai2.dto.input.ClarifaiInput
-import clarifai2.dto.model.output.ClarifaiOutput
-import clarifai2.dto.prediction.Concept
 import com.firebase.ui.auth.AuthUI
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -40,6 +36,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.LandingActivity
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
@@ -57,11 +54,12 @@ class HomeFragment : Fragment() {
     val CAMERA_REQUEST_CODE = 0
     lateinit var imageFilePath : String
     lateinit var bitmapImage : Bitmap
+    lateinit var fileNameCleanAgain : String
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -71,8 +69,8 @@ class HomeFragment : Fragment() {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<String>, grantResults: IntArray
     ) {
         Log.i("PERM", "Checking perm")
         when (requestCode)	{
@@ -102,8 +100,8 @@ class HomeFragment : Fragment() {
     fun sanitiseKey(fileName: String) : String {
         val fileNameClean = fileName.split("/");
         val fileNameCleanAgain = fileNameClean[fileNameClean.size - 1].replace(".", "").replace(
-            "jpg",
-            ""
+                "jpg",
+                ""
         )
         return fileNameCleanAgain
     }
@@ -118,7 +116,7 @@ class HomeFragment : Fragment() {
 
         if (callCameraIntent.resolveActivity(requireActivity().packageManager) != null) {
             val imageUri = Uri.fromFile(imageFile);
-            val fileNameCleanAgain = sanitiseKey(imageUri.toString())
+            fileNameCleanAgain = sanitiseKey(imageUri.toString())
 
             // Write a message to the database
             val database = Firebase.database
@@ -164,8 +162,8 @@ class HomeFragment : Fragment() {
     }
 
     override fun onActivityResult(
-        requestCode: Int, resultCode: Int,
-        intent: Intent?
+            requestCode: Int, resultCode: Int,
+            intent: Intent?
     ) {
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
             val foodView = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
@@ -187,10 +185,14 @@ class HomeFragment : Fragment() {
             }.addOnSuccessListener { taskSnapshot ->
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
                 // ...
-                myRef_temp.downloadUrl.addOnSuccessListener{
-                    url ->
+                myRef_temp.downloadUrl.addOnSuccessListener{ url ->
                     Log.i("Activity Result", "$url")
                     checkWithClarifai(url.toString())
+                    val database = Firebase.database
+                    val dbRef = database.getReference("files").child(fileNameCleanAgain)
+                    dbRef.removeValue()
+                    val photoRef: StorageReference = storage.getReferenceFromUrl(url.toString())
+                    photoRef.delete()
                 }
             }
 
@@ -209,7 +211,7 @@ class HomeFragment : Fragment() {
         val result = client.defaultModels.foodModel()
             .predict()
             .withInputs(
-                ClarifaiInput.forImage(ClarifaiImage.of(downloadUrl))
+                    ClarifaiInput.forImage(ClarifaiImage.of(downloadUrl))
             )
             .executeSync()
             .get();
@@ -231,18 +233,18 @@ class HomeFragment : Fragment() {
         val cam_btn = requireActivity().findViewById<ImageView>(R.id.cam_btn)
         cam_btn.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
-                    requireActivity() as Context,
-                    Manifest.permission.CAMERA
-                )
+                            requireActivity() as Context,
+                            Manifest.permission.CAMERA
+                    )
                 ==	PackageManager.PERMISSION_GRANTED)	{
                 Log.i("PERM", "Have permission already")
                 takePicture()
             } else {
                 Log.i("PERM", "No permission yet")
                 ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(Manifest.permission.CAMERA),
-                    RequestCameraID
+                        requireActivity(),
+                        arrayOf(Manifest.permission.CAMERA),
+                        RequestCameraID
                 );
             }
         }
@@ -259,8 +261,8 @@ class HomeFragment : Fragment() {
             val drawerLayout: DrawerLayout = requireActivity().findViewById(R.id.drawer_layout)
             drawerLayout.closeDrawer(Gravity.START as Int)
             val landingIntent = Intent(
-                requireActivity().applicationContext,
-                LandingActivity::class.java
+                    requireActivity().applicationContext,
+                    LandingActivity::class.java
             )
             requireActivity().startActivityForResult(landingIntent, 0)
         }
@@ -269,8 +271,8 @@ class HomeFragment : Fragment() {
         val languages = resources.getStringArray(R.array.Languages)
         val adapter = context?.let {
             ArrayAdapter(
-                it,
-                android.R.layout.simple_list_item_1, languages
+                    it,
+                    android.R.layout.simple_list_item_1, languages
             )
         }
         text_view.setAdapter(adapter)
@@ -306,31 +308,31 @@ class HomeFragment : Fragment() {
                         // whenever data at this location is updated.
                         if (dataSnapshot.hasChild(text)) {
                             Log.d(
-                                "input",
-                                dataSnapshot.child(text)
-                                    .child("name").value.toString() + "for user: " + FirebaseAuth.getInstance().uid.toString()
+                                    "input",
+                                    dataSnapshot.child(text)
+                                            .child("name").value.toString() + "for user: " + FirebaseAuth.getInstance().uid.toString()
                             )
                             // generate new uid for entry if the item is in the db items table
                             var uuid = UUID.randomUUID()
                             Log.d("UUID", uuid.toString())
                             // add item name to users item log
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("name").setValue(text)
+                                    .child("items").child(uuid.toString()).child("name").setValue(text)
                             // add item iid to users item log
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("iid")
-                                .setValue(dataSnapshot.child(text).child("iid").value.toString())
+                                    .child("items").child(uuid.toString()).child("iid")
+                                    .setValue(dataSnapshot.child(text).child("iid").value.toString())
                             // add item expiration date (current time + shelf life) to users item log
                             var shelfLife =
-                                dataSnapshot.child(text).child("shelf_life").value.toString()
-                                    .toInt()
+                                    dataSnapshot.child(text).child("shelf_life").value.toString()
+                                            .toInt()
                             var expiration = viewModel.calculateExpiration(shelfLife)
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("expiration_date")
-                                .setValue(expiration)
+                                    .child("items").child(uuid.toString()).child("expiration_date")
+                                    .setValue(expiration)
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("quantity")
-                                .setValue(quantity)
+                                    .child("items").child(uuid.toString()).child("quantity")
+                                    .setValue(quantity)
 
                             text_view.setText(null)
                             quantity_view.setText(null)
