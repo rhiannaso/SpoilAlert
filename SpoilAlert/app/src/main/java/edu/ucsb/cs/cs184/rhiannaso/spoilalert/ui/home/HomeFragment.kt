@@ -29,6 +29,8 @@ import androidx.lifecycle.ViewModelProvider
 import clarifai2.api.ClarifaiBuilder
 import clarifai2.dto.input.ClarifaiImage
 import clarifai2.dto.input.ClarifaiInput
+import clarifai2.dto.model.output.ClarifaiOutput
+import clarifai2.dto.prediction.Concept
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
@@ -37,6 +39,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.LandingActivity
 import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
@@ -198,7 +201,7 @@ class HomeFragment : Fragment() {
             /*val takenPhotoUri = getPhotoFileUri(photoFileName)
             val takenImage = BitmapFactory.decodeFile(takenPhotoUri!!.path)*/
 
-            val img = requireActivity().findViewById<ImageView>(R.id.camera_image)
+            //val img = requireActivity().findViewById<ImageView>(R.id.camera_image)
             //img.setImageBitmap(takenImage)
 
             bitmapImage = setScaledBitmap()
@@ -206,11 +209,12 @@ class HomeFragment : Fragment() {
             bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val data = baos.toByteArray()
 
-            val storage = Firebase.storage
-            val storageRef = storage.reference
+            val storage = FirebaseStorage.getInstance()
+            val storageRef = storage.getReference()
             //val myRef_temp = storageRef.child(fileName+".jpg")
             //val myRef_temp = storageRef.child(photoFileName)
             val myRef_temp = storageRef.child("food.jpg")
+            //val myRef_temp = storage.getReference("food.jpg")
 
             var uploadTask = myRef_temp.putBytes(data)
             uploadTask.addOnFailureListener {
@@ -220,9 +224,16 @@ class HomeFragment : Fragment() {
                 // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
                 // ...
                 val downloadUrl = taskSnapshot.metadata?.reference?.downloadUrl
-                Toast.makeText(context, downloadUrl.toString(), Toast.LENGTH_LONG).show()
-                Log.i("Activity Result", "$downloadUrl")
-                checkWithClarifai(downloadUrl.toString())
+                val dURL = myRef_temp.downloadUrl.addOnSuccessListener{
+                    url ->
+                    Log.i("Activity Result", "$url")
+                    checkWithClarifai(url.toString())
+
+                }
+                /*Toast.makeText(context, dURL.toString(), Toast.LENGTH_LONG).show()
+                Log.i("Activity Result", "$dURL")
+                Log.i("Activity Result", "$myRef_temp")
+                checkWithClarifai(myRef_temp.toString())*/
             }
             // Get the Uri of data
             //val file_uri = intent.data
@@ -245,8 +256,8 @@ class HomeFragment : Fragment() {
         val result = client.defaultModels.foodModel()
             .predict()
             .withInputs(
-                //ClarifaiInput.forImage(ClarifaiImage.of(downloadUrl))
-                ClarifaiInput.forImage(ClarifaiImage.of("https://firebasestorage.googleapis.com/v0/b/spoilalert-7c0e6.appspot.com/o/mountains.jpg?alt=media&token=4e89e757-ad7d-4b01-bd08-5ff70123f566"))
+                ClarifaiInput.forImage(ClarifaiImage.of(downloadUrl))
+                //ClarifaiInput.forImage(ClarifaiImage.of("https://firebasestorage.googleapis.com/v0/b/spoilalert-7c0e6.appspot.com/o/mountains.jpg?alt=media&token=4e89e757-ad7d-4b01-bd08-5ff70123f566"))
             )
             .executeSync()
             .get();
