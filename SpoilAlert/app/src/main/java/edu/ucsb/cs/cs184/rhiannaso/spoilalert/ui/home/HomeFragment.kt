@@ -5,6 +5,7 @@ import android.app.Activity.RESULT_OK
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -24,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -36,7 +38,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -273,32 +274,12 @@ class HomeFragment : Fragment() {
             requireActivity().startActivityForResult(landingIntent, 0)
         }
 
-        val database = Firebase.database
-        val myRef_items = database.getReference("items")
-        val foods = arrayListOf<String>()
-
-
-        myRef_items.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-
-                for(food in dataSnapshot.children)
-                {
-                    foods.add(food.child("name").value.toString())
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-                Log.w("In surfaceCreated", "Failed to read value.", error.toException())
-            }
-            })
-
         var text_view = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
-        //val languages = resources.getStringArray(R.array.Languages)
+        val languages = resources.getStringArray(R.array.Languages)
         val adapter = context?.let {
             ArrayAdapter(
                     it,
-                    android.R.layout.simple_list_item_1, foods
+                    android.R.layout.simple_list_item_1, languages
             )
         }
         text_view.setAdapter(adapter)
@@ -307,114 +288,76 @@ class HomeFragment : Fragment() {
         // onClick for submit item button
         button.setOnClickListener {
             var text_view = requireActivity().findViewById<EditText>(R.id.editItem)
-            var quantity_view = requireActivity().findViewById<EditText>(R.id.editQuantity)
-            var shelf_life_view = requireActivity().findViewById<EditText>(R.id.editShelfLife)
 
+            var quantity_view = requireActivity().findViewById<EditText>(R.id.editQuantity)
             var text = text_view.getText().toString()
             var quantity = quantity_view.getText().toString()
-            var shelf_life = shelf_life_view.getText().toString()
 
-            val database = Firebase.database
-            val myRef_items = database.getReference("items")
-            val myRef_users = database.getReference("users")
+            if (quantity.trim().length <= 0 || text.trim().length <= 0) {
+                if (quantity.trim().length <= 0 && text.trim().length <= 0)
+                    Toast.makeText(context, "Please include item and quantity", Toast.LENGTH_LONG).show()
+                else if (text.trim().length <= 0)
+                    Toast.makeText(context, "Please include item", Toast.LENGTH_SHORT).show()
+                else if (quantity.trim().length <= 0)
+                    Toast.makeText(context, "Please include quantity", Toast.LENGTH_LONG).show()
+            } else {
+                Log.d("input text", text)
+                Log.d("input quantity", quantity.toString())
 
+                val database = Firebase.database
+                val myRef_items = database.getReference("items")
+                val myRef_users = database.getReference("users")
 
                 myRef_items.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        if (quantity.trim().length <= 0 || text.trim().length <= 0 || (!dataSnapshot.hasChild(text) && shelf_life.trim().length <= 0)) {
-                            if (quantity.trim().length <= 0 && text.trim().length <= 0)
-                                Toast.makeText(
-                                    context,
-                                    "Please include item and quantity",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            else if (text.trim().length <= 0)
-                                Toast.makeText(context, "Please include item", Toast.LENGTH_SHORT)
-                                    .show()
-                            else if (quantity.trim().length <= 0)
-                                Toast.makeText(
-                                    context,
-                                    "Please include quantity",
-                                    Toast.LENGTH_LONG
-                                )
-                                    .show()
-                            else if (!dataSnapshot.hasChild(text) && shelf_life.trim().length <= 0)
-                                Toast.makeText(
-                                    context,
-                                    "We don't have your item in our database, please include a shelf life",
-                                    Toast.LENGTH_LONG
-                                )
-                                    .show()
-                        } else {
-                            Log.d("input text", text)
-                            Log.d("input quantity", quantity.toString())
-                            Log.d("input quantity", shelf_life.toString())
-
-                            // This method is called once with the initial value and again
-                            // whenever data at this location is updated.
-                            /*Log.d(
-                                            "input",
-                                            dataSnapshot.child(text)
-                                                    .child("name").value.toString() + "for user: " + FirebaseAuth.getInstance().uid.toString()
-                                    )*/
+                        // This method is called once with the initial value and again
+                        // whenever data at this location is updated.
+                        if (dataSnapshot.hasChild(text)) {
+                            Log.d(
+                                    "input",
+                                    dataSnapshot.child(text)
+                                            .child("name").value.toString() + "for user: " + FirebaseAuth.getInstance().uid.toString()
+                            )
                             // generate new uid for entry if the item is in the db items table
                             var uuid = UUID.randomUUID()
                             Log.d("UUID", uuid.toString())
                             // add item name to users item log
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("name").setValue(text)
+                                    .child("items").child(uuid.toString()).child("name").setValue(text)
                             // add item iid to users item log
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("iid")
-                                .setValue(dataSnapshot.child(text).child("iid").value.toString())
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("eid")
-                                .setValue(uuid.toString())
-
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("iid").setValue(dataSnapshot.child(text).child("iid").value.toString())
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("eid").setValue(uuid.toString())
                             // add item expiration date (current time + shelf life) to users item log
-                            if (dataSnapshot.hasChild(text) && shelf_life.trim().length <= 0) {
-                                shelf_life =
+                            var shelfLife =
                                     dataSnapshot.child(text).child("shelf_life").value.toString()
-                            }
-
-                            var expiration = viewModel.calculateExpiration(shelf_life.toInt())
-
-
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("expiration_date")
-                                .setValue(expiration)
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("quantity")
-                                .setValue(quantity)
+                                            .toInt()
+                            var expiration = viewModel.calculateExpiration(shelfLife)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("expiration_date").setValue(expiration)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("quantity").setValue(quantity)
                             //Id used for notification and requestCode
                             val nid = setNotificationTime(text, expiration)
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("nid").setValue(nid)
-                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
-                                .child("items").child(uuid.toString()).child("notif_index")
-                                .setValue("0")
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("nid").setValue(nid)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("notif_index").setValue("0")
 
                             text_view.setText(null)
                             quantity_view.setText(null)
-                            shelf_life_view.setText(null)
 
                             var msg = "$quantity $text(s) added to your fridge!"
 
                             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                            val foodView =
-                                requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
+                            val foodView = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
                             foodView.hint = getString(R.string.log_hint)
-
-
+                        } else {
+                            Log.d("input", "input item does not exist in items table")
                         }
-
                     }
+
                     override fun onCancelled(error: DatabaseError) {
                         // Failed to read value
                         Log.w("In surfaceCreated", "Failed to read value.", error.toException())
                     }
-            })
-
+                })
+            }
         }
     }
     private val CHANNEL_ID = "spoil_alert_id"
