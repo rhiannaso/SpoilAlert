@@ -49,4 +49,5 @@
     <string name="leave_house">LEAVE</string>
     <string name="house_members">House Members</string>
     <string name="wait_msg">Processing Image...</string>
+    <string name="save_changes">Save Changes</string>
 </resources>

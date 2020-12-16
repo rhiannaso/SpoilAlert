@@ -47,9 +47,9 @@ class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.A
             notifyItemChanged(position)
         }
         holder.item_settings_button.setOnClickListener {
-            // TODO: onClickListener for each item's settings
-            // TODO: add popup window code here to be triggered on item_settings_button click
             Log.d("item_settings_button", "item" + position.toString() + " settings button clicked")
+            val popUp = ItemPopUp()
+            popUp.showItemPopUp(it, cur_item.item_name, cur_item.nid.toInt(), cur_item.item_expiration)
         }
 
         Log.d("adapter", "in onBindViewHolder adapter")
