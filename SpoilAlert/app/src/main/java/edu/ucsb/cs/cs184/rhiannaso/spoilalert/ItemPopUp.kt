@@ -11,16 +11,26 @@ import android.view.View
 import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.core.app.NotificationCompat
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
 import java.util.*
 
 
 class ItemPopUp {
 
-    fun showItemPopUp(view: View, itemName: String, nid: Int, expiration: Date) {
+    fun showItemPopUp(view: View, itemName: String, nid: Int, expiration: Date, eid: String) {
         Log.d("", "in popup view")
         //Create a View object yourself through inflater
         val inflater = LayoutInflater.from(view.context)
         val popupView: View = inflater.inflate(R.layout.pop_up_layout, null)
+
+        val database = Firebase.database
+        val myRef_notif_index = database.getReference("users").child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(eid.toString()).child("notif_index")
 
         //Specify the length and width through constants
         val width = LinearLayout.LayoutParams.MATCH_PARENT
@@ -46,12 +56,21 @@ class ItemPopUp {
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(view.context, R.layout.support_simple_spinner_dropdown_item, reminder_options)
         dropdown.adapter = adapter
 
+        myRef_notif_index.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                dropdown.setSelection(dataSnapshot.value.toString().toInt())
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
+
         //save button
         val saveChangesButton: Button = popupView.findViewById(R.id.item_options_save_btn)
         saveChangesButton.setOnClickListener(View.OnClickListener {
             Log.d("", "Selected Index: ${dropdown.selectedItemPosition}")
             cancelAlarm(view, nid)
             setAlarm(view, itemName, nid, expiration, dropdown.selectedItemPosition)
+            myRef_notif_index.setValue(dropdown.selectedItemPosition.toString())
             Toast.makeText(view.context, "Options Saved!", Toast.LENGTH_SHORT).show()
         })
 

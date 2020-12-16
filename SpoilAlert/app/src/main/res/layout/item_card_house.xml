@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/item_name_house"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="Item 1"
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/item_quantity1_house"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_name_house"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:text="Quantity: "
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/item_quantity_house"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_name_house"
+            android:layout_toRightOf="@+id/minus_quantity_house"
+            android:gravity="center_vertical"
+            android:text="2"
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="15dp" />
+
+        <ImageButton
+            android:id="@+id/minus_quantity_house"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_remove_24px"
+            android:layout_toRightOf="@+id/item_quantity1_house"
+            android:layout_below="@+id/item_name_house"/>
+
+        <ImageButton
+            android:id="@+id/plus_quantity_house"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_add_24px"
+            android:layout_toRightOf="@+id/item_quantity_house"
+            android:layout_below="@+id/item_name_house"/>
+
+        <TextView
+            android:id="@+id/item_expiration_house"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:text="Dec 18, 2020"
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="25dp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

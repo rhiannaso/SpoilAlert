@@ -21,10 +21,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ItemAdapter
-import edu.ucsb.cs.cs184.rhiannaso.spoilalert.ItemCard
-import edu.ucsb.cs.cs184.rhiannaso.spoilalert.MainActivity
-import edu.ucsb.cs.cs184.rhiannaso.spoilalert.R
+import edu.ucsb.cs.cs184.rhiannaso.spoilalert.*
 import java.text.SimpleDateFormat
 
 class HouseFridgeFragment : Fragment() {
@@ -47,7 +44,7 @@ class HouseFridgeFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(HouseFridgeViewModel::class.java)
 
         var item_list : MutableList<ItemCard> = ArrayList<ItemCard>()
-        var adapter : ItemAdapter = ItemAdapter(item_list)
+        var adapter : ItemAdapterHouse = ItemAdapterHouse(item_list)
 
         val recycler_view = requireActivity().findViewById<RecyclerView>(R.id.recycler_view_house)
         val house_fridge_empty = requireActivity().findViewById<TextView>(R.id.house_fridge_empty)
@@ -67,11 +64,13 @@ class HouseFridgeFragment : Fragment() {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             for (snapshot in dataSnapshot.children) {
                                 val format = SimpleDateFormat("MM/dd/yyyy")
-                                val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(), format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString(), snapshot.child("nid").value.toString())
+                                val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(),
+                                        format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())),
+                                        snapshot.child("eid").value.toString(), snapshot.child("nid").value.toString())
                                 item_list.add(item)
                             }
                             item_list = item_list.sortedWith(compareBy({ it.item_expiration })).toMutableList()
-                            adapter = ItemAdapter(item_list)
+                            adapter = ItemAdapterHouse(item_list)
                             if (item_list.size > 0) {
                                 house_fridge_empty.visibility = TextView.INVISIBLE
                             }
