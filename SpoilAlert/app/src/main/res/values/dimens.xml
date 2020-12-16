@@ -13,6 +13,10 @@
     <dimen name="entry_prompt">18sp</dimen>
     <dimen name="cam_btn">8dp</dimen>
 
+    <dimen name="bulletin_entry">8dp</dimen>
+    <dimen name="bulletin_entry_margin">16dp</dimen>
+    <dimen name="send_btn">8dp</dimen>
+
     <dimen name="house_header">32sp</dimen>
     <dimen name="house_desc">14sp</dimen>
     <dimen name="house_header_spacing">8dp</dimen>

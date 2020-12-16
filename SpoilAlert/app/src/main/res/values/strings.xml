@@ -50,4 +50,7 @@
     <string name="house_members">House Members</string>
     <string name="wait_msg">Processing Image...</string>
     <string name="save_changes">Save Changes</string>
+    <string name="bulletin_hint">Post Message...</string>
+    <string name="house_fridge">House Fridge</string>
+    <string name="house_bulletin">House Bulletin</string>
 </resources>

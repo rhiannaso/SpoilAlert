@@ -72,6 +72,7 @@ class JoinHouseFragment : Fragment() {
                         nav_menu.findItem(R.id.nav_join_house).isVisible = false
                         nav_menu.findItem(R.id.nav_house_fridge).isVisible = true
                         nav_menu.findItem(R.id.nav_members).isVisible = true
+                        nav_menu.findItem(R.id.nav_bulletin).isVisible = true
                         // Indicate that user is in house
                         val houseIdView = requireActivity().findViewById<TextView>(R.id.house_id)
                         houseIdView.text = "In House: $username_input"
@@ -108,6 +109,7 @@ class JoinHouseFragment : Fragment() {
                         nav_menu.findItem(R.id.nav_join_house).isVisible = false
                         nav_menu.findItem(R.id.nav_house_fridge).isVisible = true
                         nav_menu.findItem(R.id.nav_members).isVisible = true
+                        nav_menu.findItem(R.id.nav_bulletin).isVisible = true
                         // Indicate that user is in house
                         val houseIdView = requireActivity().findViewById<TextView>(R.id.house_id)
                         houseIdView.text = "In House: $username_input"

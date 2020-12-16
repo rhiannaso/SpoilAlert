@@ -64,11 +64,13 @@ class MembersFragment : Fragment() {
                     if (house.key == currHouse) {
                         val allUsers = house.children
                         for (user in allUsers) {
-                            memberNames.add(user.value.toString())
-                            if (user.key.toString() == currUser) {
-                                btnVisibility.add("visible")
-                            } else {
-                                btnVisibility.add("invisible")
+                            if(user.key != "messages") {
+                                memberNames.add(user.value.toString())
+                                if (user.key.toString() == currUser) {
+                                    btnVisibility.add("visible")
+                                } else {
+                                    btnVisibility.add("invisible")
+                                }
                             }
                         }
                     }
