@@ -127,7 +127,9 @@ class FridgeFragment : Fragment() {
                 for (snapshot in dataSnapshot.children) {
                     Log.d("in items snapshot", snapshot.getValue().toString())
                     val format = SimpleDateFormat("MM/dd/yyyy")
-                    val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(), format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())), snapshot.child("eid").value.toString(), snapshot.child("nid").value.toString())
+                    val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(),
+                            format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())),
+                            snapshot.child("eid").value.toString(), snapshot.child("nid").value.toString())
                     Log.d("in items snapshot", item.toString())
                     item_list.add(item)
                     Log.d("in items snapshot", item_list.toString())

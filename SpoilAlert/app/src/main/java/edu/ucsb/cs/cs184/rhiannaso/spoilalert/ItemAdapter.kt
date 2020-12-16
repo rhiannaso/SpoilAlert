@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -45,6 +46,11 @@ class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.A
             myRef_item.child("quantity").setValue(itemList[position].item_quantity.toString())
             notifyItemChanged(position)
         }
+        holder.item_settings_button.setOnClickListener {
+            Log.d("item_settings_button", "item" + position.toString() + " settings button clicked")
+            val popUp = ItemPopUp()
+            popUp.showItemPopUp(it, cur_item.item_name, cur_item.nid.toInt(), cur_item.item_expiration)
+        }
 
         Log.d("adapter", "in onBindViewHolder adapter")
     }
@@ -60,5 +66,6 @@ class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.A
         val item_expiration : TextView = itemView.findViewById(R.id.item_expiration)
         val item_minus_button : ImageButton = itemView.findViewById(R.id.minus_quantity)
         val item_plus_button : ImageButton = itemView.findViewById(R.id.plus_quantity)
+        val item_settings_button : ImageView = itemView.findViewById(R.id.item_settings)
     }
 }
