@@ -377,6 +377,7 @@ class HomeFragment : Fragment() {
 
                             text_view.setText(null)
                             quantity_view.setText(null)
+                            shelf_life_view.setText(null)
 
                             var msg = "$quantity $text(s) added to your fridge!"
 
