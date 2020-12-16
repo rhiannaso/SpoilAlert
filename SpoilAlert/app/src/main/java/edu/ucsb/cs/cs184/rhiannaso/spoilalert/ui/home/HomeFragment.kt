@@ -336,6 +336,7 @@ class HomeFragment : Fragment() {
                             //Id used for notification and requestCode
                             val nid = setNotificationTime(text, expiration)
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("nid").setValue(nid)
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(uuid.toString()).child("notif_index").setValue("0")
 
                             text_view.setText(null)
                             quantity_view.setText(null)

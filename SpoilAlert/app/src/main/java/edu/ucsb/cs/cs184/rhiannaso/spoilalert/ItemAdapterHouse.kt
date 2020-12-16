@@ -15,18 +15,18 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
+class ItemAdapterHouse(private val itemList : MutableList<ItemCard>) : RecyclerView.Adapter<ItemAdapterHouse.ItemHouseViewHolder>() {
 
     private fun compressExpiration(expiration : String) : String {
         return expiration.substring(4, 10) + ", " + expiration.substring(24, 28)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_card, parent, false)
-        return ItemViewHolder(itemView)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHouseViewHolder {
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_card_house, parent, false)
+        return ItemHouseViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ItemHouseViewHolder, position: Int) {
         val database = Firebase.database
         val myRef_item = database.getReference("users").child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(itemList[position].eid)
         val cur_item = itemList[position]
@@ -46,11 +46,6 @@ class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.A
             myRef_item.child("quantity").setValue(itemList[position].item_quantity.toString())
             notifyItemChanged(position)
         }
-        holder.item_settings_button.setOnClickListener {
-            Log.d("item_settings_button", "item" + position.toString() + " settings button clicked")
-            val popUp = ItemPopUp()
-            popUp.showItemPopUp(it, cur_item.item_name, cur_item.nid.toInt(), cur_item.item_expiration, cur_item.eid)
-        }
 
         Log.d("adapter", "in onBindViewHolder adapter")
     }
@@ -60,12 +55,11 @@ class ItemAdapter(private val itemList : MutableList<ItemCard>) : RecyclerView.A
         return itemList.size
     }
 
-    class ItemViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
-        val item_name : TextView = itemView.findViewById(R.id.item_name)
-        val item_quantity : TextView = itemView.findViewById(R.id.item_quantity)
-        val item_expiration : TextView = itemView.findViewById(R.id.item_expiration)
-        val item_minus_button : ImageButton = itemView.findViewById(R.id.minus_quantity)
-        val item_plus_button : ImageButton = itemView.findViewById(R.id.plus_quantity)
-        val item_settings_button : ImageView = itemView.findViewById(R.id.item_settings)
+    class ItemHouseViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+        val item_name : TextView = itemView.findViewById(R.id.item_name_house)
+        val item_quantity : TextView = itemView.findViewById(R.id.item_quantity_house)
+        val item_expiration : TextView = itemView.findViewById(R.id.item_expiration_house)
+        val item_minus_button : ImageButton = itemView.findViewById(R.id.minus_quantity_house)
+        val item_plus_button : ImageButton = itemView.findViewById(R.id.plus_quantity_house)
     }
 }
