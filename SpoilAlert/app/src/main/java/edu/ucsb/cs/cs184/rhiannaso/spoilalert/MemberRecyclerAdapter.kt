@@ -50,6 +50,7 @@ class MemberRecyclerAdapter(private val memberNames : MutableList<String>,
                     nav_menu.findItem(R.id.nav_join_house).isVisible = true
                     nav_menu.findItem(R.id.nav_house_fridge).isVisible = false
                     nav_menu.findItem(R.id.nav_members).isVisible = false
+                    nav_menu.findItem(R.id.nav_bulletin).isVisible = false
                     memberNames.removeAt(i)
                     notifyItemRemoved(i)
                 }

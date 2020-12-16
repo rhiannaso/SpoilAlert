@@ -231,6 +231,7 @@ class HomeFragment : Fragment() {
 
         val foodView = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
         foodView.setText(foodName)
+        foodView.hint = getString(R.string.log_hint)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

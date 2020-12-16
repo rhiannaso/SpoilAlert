@@ -127,13 +127,15 @@ class MainActivity : AppCompatActivity() {
                             nav_menu.findItem(R.id.nav_join_house).isVisible = false
                             nav_menu.findItem(R.id.nav_house_fridge).isVisible = true
                             nav_menu.findItem(R.id.nav_members).isVisible = true
-                            break
+                            nav_menu.findItem(R.id.nav_bulletin).isVisible = true
+                            return
                         } else {
                             Log.i("checkIfInHouse", "User not in house")
                             houseIdView.text = ""
                             nav_menu.findItem(R.id.nav_join_house).isVisible = true
                             nav_menu.findItem(R.id.nav_house_fridge).isVisible = false
                             nav_menu.findItem(R.id.nav_members).isVisible = false
+                            nav_menu.findItem(R.id.nav_bulletin).isVisible = false
                         }
                     }
                 }
