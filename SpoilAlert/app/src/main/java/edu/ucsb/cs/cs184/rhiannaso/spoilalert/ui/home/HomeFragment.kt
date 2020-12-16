@@ -5,7 +5,6 @@ import android.app.Activity.RESULT_OK
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -25,7 +24,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -38,6 +36,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -274,12 +273,32 @@ class HomeFragment : Fragment() {
             requireActivity().startActivityForResult(landingIntent, 0)
         }
 
+        val database = Firebase.database
+        val myRef_items = database.getReference("items")
+        val foods = arrayListOf<String>()
+
+
+        myRef_items.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+
+                for(food in dataSnapshot.children)
+                {
+                    foods.add(food.child("name").value.toString())
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+                Log.w("In surfaceCreated", "Failed to read value.", error.toException())
+            }
+            })
+
         var text_view = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
-        val languages = resources.getStringArray(R.array.Languages)
+        //val languages = resources.getStringArray(R.array.Languages)
         val adapter = context?.let {
             ArrayAdapter(
                     it,
-                    android.R.layout.simple_list_item_1, languages
+                    android.R.layout.simple_list_item_1, foods
             )
         }
         text_view.setAdapter(adapter)
