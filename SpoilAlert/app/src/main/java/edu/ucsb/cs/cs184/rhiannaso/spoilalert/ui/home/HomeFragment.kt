@@ -264,12 +264,10 @@ class HomeFragment : Fragment() {
                 Log.i("Options","in here")
                 shelfText.visibility = View.VISIBLE
                 shelf_life_view.visibility = View.VISIBLE
-                //moreOptions.visibility = View.INVISIBLE
                 options = true
             } else {
                 shelfText.visibility = View.INVISIBLE
                 shelf_life_view.visibility = View.INVISIBLE
-                //moreOptions.visibility = View.VISIBLE
                 options = false
             }
 

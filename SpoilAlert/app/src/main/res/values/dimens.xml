@@ -22,6 +22,14 @@
     <dimen name="fridge_textSize">25sp</dimen>
     <dimen name="fridge_offset">100dp</dimen>
 
+    <dimen name="home_header">28sp</dimen>
+    <dimen name="home_subtext">18sp</dimen>
+    <dimen name="home_bottom">32dp</dimen>
+    <dimen name="home_margin">16dp</dimen>
+    <dimen name="home_padding">8dp</dimen>
+    <dimen name="home_right">24dp</dimen>
+    <dimen name="home_top">12dp</dimen>
+
     <dimen name="card_content">4dp</dimen>
     <dimen name="card_margin">8dp</dimen>
 
