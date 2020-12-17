@@ -5,8 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.gms.common.SignInButton
@@ -24,6 +26,9 @@ class LandingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.landing_activity)
+
+        val imageView: ImageView = findViewById(R.id.logo)
+        Glide.with(this).load(R.drawable.logogif).into(imageView)
 
         signin_button = findViewById(R.id.google_button)
         // Choose authentication providers

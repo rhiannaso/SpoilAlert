@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:gravity="center_vertical"
-            android:layout_toRightOf="@+id/plus_quantity"
+            android:layout_toLeftOf="@+id/item_settings"
             android:layout_marginLeft="75dp"
             android:text="Dec 18, 2020"
             android:textColor="@android:color/holo_green_dark"
@@ -73,7 +73,6 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
-            android:layout_toRightOf="@+id/item_expiration"
             android:src="@drawable/ic_more_vert_24px"
             android:layout_centerVertical="true" />
 
