@@ -59,13 +59,23 @@
         <TextView
             android:id="@+id/item_expiration_house"
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:layout_alignParentRight="true"
             android:text="Dec 18, 2020"
             android:textColor="@android:color/holo_green_dark"
             android:textSize="25dp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/item_owner_house"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:text="Owner: Justin Dong"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/item_expiration_house"
+            android:textColor="@android:color/holo_green_dark"/>
+
 
     </RelativeLayout>
 

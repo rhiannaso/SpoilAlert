@@ -28,12 +28,13 @@ class ItemAdapterHouse(private val itemList : MutableList<ItemCard>) : RecyclerV
 
     override fun onBindViewHolder(holder: ItemHouseViewHolder, position: Int) {
         val database = Firebase.database
-        val myRef_item = database.getReference("users").child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items").child(itemList[position].eid)
+        val myRef_item = database.getReference("users").child(itemList[position].owner).child("items").child(itemList[position].eid)
         val cur_item = itemList[position]
         holder.item_name.setText(cur_item.item_name)
         holder.item_quantity.setText(cur_item.item_quantity)
         Log.d("cur_item.expiration", cur_item.item_expiration.toString())
         holder.item_expiration.setText(compressExpiration(cur_item.item_expiration.toString()))
+        holder.item_owner.setText("Owner: " + cur_item.owner_name.toString())
         holder.item_minus_button.setOnClickListener {
             if (itemList[position].item_quantity.toInt() > 1) {
                 itemList[position].item_quantity = (itemList[position].item_quantity.toInt()-1).toString()
@@ -61,5 +62,6 @@ class ItemAdapterHouse(private val itemList : MutableList<ItemCard>) : RecyclerV
         val item_expiration : TextView = itemView.findViewById(R.id.item_expiration_house)
         val item_minus_button : ImageButton = itemView.findViewById(R.id.minus_quantity_house)
         val item_plus_button : ImageButton = itemView.findViewById(R.id.plus_quantity_house)
+        val item_owner : TextView = itemView.findViewById(R.id.item_owner_house)
     }
 }
