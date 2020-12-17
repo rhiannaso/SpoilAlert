@@ -354,7 +354,7 @@ class HomeFragment : Fragment() {
                             else if (!dataSnapshot.hasChild(text) && shelf_life.trim().length <= 0)
                                 Toast.makeText(
                                     context,
-                                    "We don't have your item in our database, please include a shelf life",
+                                    "We don't have your item in our database, please click 'More Options' and include a shelf life",
                                     Toast.LENGTH_LONG
                                 )
                                     .show()
