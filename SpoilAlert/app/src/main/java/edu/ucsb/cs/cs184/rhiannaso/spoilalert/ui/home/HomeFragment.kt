@@ -378,6 +378,14 @@ class HomeFragment : Fragment() {
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                 .child("items").child(uuid.toString()).child("eid")
                                 .setValue(uuid.toString())
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items")
+                                .child(uuid.toString()).child("owner")
+                                .setValue(FirebaseAuth.getInstance()
+                                        .currentUser?.uid.toString())
+                            myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).child("items")
+                                    .child(uuid.toString()).child("owner_name")
+                                    .setValue(FirebaseAuth.getInstance()
+                                            .currentUser?.displayName.toString())
 
                             // add item expiration date (current time + shelf life) to users item log
                             if (dataSnapshot.hasChild(text) && shelf_life.trim().length <= 0) {

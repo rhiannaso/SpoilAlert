@@ -66,7 +66,8 @@ class HouseFridgeFragment : Fragment() {
                                 val format = SimpleDateFormat("MM/dd/yyyy")
                                 val item = ItemCard(snapshot.child("name").value.toString(), snapshot.child("quantity").value.toString(),
                                         format.parse(compressExpiration(snapshot.child("expiration_date").value.toString())),
-                                        snapshot.child("eid").value.toString(), snapshot.child("nid").value.toString())
+                                        snapshot.child("eid").value.toString(), snapshot.child("nid").value.toString(),
+                                        snapshot.child("owner").value.toString(), snapshot.child("owner_name").value.toString())
                                 item_list.add(item)
                             }
                             item_list = item_list.sortedWith(compareBy({ it.item_expiration })).toMutableList()
