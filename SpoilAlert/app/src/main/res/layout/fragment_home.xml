@@ -11,103 +11,193 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/submit"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/home_h_guideline2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.679" />
+        app:layout_constraintTop_toTopOf="@+id/home_h_guideline"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
         android:id="@+id/cam_btn"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@color/bright_red"
         android:padding="@dimen/cam_btn"
+        android:layout_marginTop="@dimen/home_padding"
         android:src="@drawable/ic_camera"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/home_h_guideline2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.257"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/editItem"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.409" />
+        app:layout_constraintTop_toTopOf="@+id/home_h_guideline"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/editShelfLife"
-        android:layout_width="170dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/home_top"
+        android:background="@drawable/home_text_reg"
         android:ems="10"
-        android:hint="Enter Shelf Life..."
+        android:hint="@string/enter_shelf_life"
         android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="@dimen/home_padding"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/submit_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.631"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.588" />
+        app:layout_constraintTop_toBottomOf="@+id/shelfLifeText"
+        app:layout_constraintVertical_bias="0.0" />
 
     <AutoCompleteTextView
         android:id="@+id/editItem"
-        android:layout_width="170dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="@dimen/home_padding"
+        android:layout_marginStart="@dimen/home_margin"
+        android:background="@drawable/home_text_enter"
         android:hint="@string/log_hint"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.631"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.419" />
+        android:paddingTop="@dimen/home_padding"
+        android:paddingBottom="@dimen/home_padding"
+        android:paddingStart="@dimen/home_padding"
+        android:paddingEnd="@dimen/home_right"
+        app:layout_constraintBottom_toTopOf="@+id/editQuantity"
+        app:layout_constraintEnd_toStartOf="@+id/cam_btn"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@+id/home_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/home_h_guideline"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <EditText
         android:id="@+id/editQuantity"
-        android:layout_width="170dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_marginStart="@dimen/home_margin"
+        android:layout_marginTop="@dimen/home_margin"
+        android:background="@drawable/home_text_reg"
+        android:ems="11"
         android:hint="@string/quantity_hint"
         android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="@dimen/home_padding"
+        app:layout_constraintBottom_toTopOf="@+id/home_h_guideline2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.655"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/home_guideline"
+        app:layout_constraintTop_toBottomOf="@+id/editItem"
+        app:layout_constraintVertical_bias="0.35000002" />
 
     <TextView
         android:id="@+id/shelfLifeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Optional Custom \nShelf Life:"
+        android:text="@string/home_shelf"
         android:textAlignment="textEnd"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/editShelfLife"
-        app:layout_constraintHorizontal_bias="0.804"
+        android:textSize="@dimen/home_subtext"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/home_h_guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.581" />
+        app:layout_constraintTop_toBottomOf="@+id/quantityText"
+        app:layout_constraintVertical_bias="0.25" />
 
     <TextView
         android:id="@+id/itemText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Item:"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/editItem"
-        app:layout_constraintHorizontal_bias="0.906"
+        android:layout_marginTop="@dimen/home_margin"
+        android:layout_marginBottom="@dimen/home_bottom"
+        android:text="@string/home_item"
+        android:textSize="@dimen/home_subtext"
+        app:layout_constraintBottom_toTopOf="@+id/quantityText"
+        app:layout_constraintEnd_toStartOf="@+id/home_guideline"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.411" />
+        app:layout_constraintTop_toBottomOf="@+id/home_h_guideline"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/quantityText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Quantity:"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/editQuantity"
-        app:layout_constraintHorizontal_bias="0.912"
+        android:layout_marginBottom="@dimen/home_bottom"
+        android:text="@string/home_qty"
+        android:textSize="@dimen/home_subtext"
+        app:layout_constraintBottom_toTopOf="@+id/home_h_guideline2"
+        app:layout_constraintEnd_toStartOf="@+id/home_guideline"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/itemText" />
+
+    <TextView
+        android:id="@+id/home_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/home_header"
+        android:textSize="@dimen/home_header"
+        app:layout_constraintBottom_toTopOf="@+id/home_h_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.7" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/home_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/home_h_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/home_h_guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/home_h_guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <TextView
+        android:id="@+id/options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/more_options"
+        android:textColor="@color/deep_blue"
+        android:clickable="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/shelfLifeText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editQuantity"
+        app:layout_constraintVertical_bias="0.7" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:src="@drawable/crate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/home_h_guideline3"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,20 +4,20 @@
     android:id="@+id/members_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:contentPadding="4dp">
+    android:layout_margin="@dimen/card_margin"
+    app:contentPadding="@dimen/card_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp" >
+        android:padding="@dimen/members_card_margin" >
 
         <ImageView
             android:id="@+id/member_image"
             android:src="@drawable/ic_members"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="@dimen/members_card_margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/member_name"
@@ -27,8 +27,8 @@
             android:id="@+id/member_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="24sp"
+            android:layout_marginStart="@dimen/members_card_margin"
+            android:textSize="@dimen/members_card_text"
             app:layout_constraintStart_toEndOf="@+id/member_image"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -43,7 +43,7 @@
             app:layout_constraintStart_toEndOf="@+id/member_name"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="16dp" />
+            android:layout_marginEnd="@dimen/members_card_margin" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
