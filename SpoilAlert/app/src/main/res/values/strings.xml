@@ -56,4 +56,10 @@
     <string name="fridge_is_empty">Fridge is empty.</string>
     <string name="reminder">Reminder:</string>
     <string name="helloWorld">Hello World</string>
+    <string name="enter_shelf_life">Enter Shelf Life...</string>
+    <string name="more_options">More Options...</string>
+    <string name="home_header">Stock Your Fridge</string>
+    <string name="home_item">Item:</string>
+    <string name="home_qty">Quantity:</string>
+    <string name="home_shelf">Optional Custom Shelf Life (days):</string>
 </resources>

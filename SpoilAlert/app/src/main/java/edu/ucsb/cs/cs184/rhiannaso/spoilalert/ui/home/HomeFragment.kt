@@ -60,6 +60,7 @@ class HomeFragment : Fragment() {
     lateinit var imageFilePath : String
     lateinit var bitmapImage : Bitmap
     lateinit var fileNameCleanAgain : String
+    var options = false
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -236,6 +237,7 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         var viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        val shelf_life_view = requireActivity().findViewById<EditText>(R.id.editShelfLife)
         val cam_btn = requireActivity().findViewById<ImageView>(R.id.cam_btn)
         cam_btn.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
@@ -253,6 +255,24 @@ class HomeFragment : Fragment() {
                         RequestCameraID
                 );
             }
+        }
+
+        val moreOptions = requireActivity().findViewById<TextView>(R.id.options)
+        moreOptions.setOnClickListener {
+            val shelfText = requireActivity().findViewById<TextView>(R.id.shelfLifeText)
+            if (!options) {
+                Log.i("Options","in here")
+                shelfText.visibility = View.VISIBLE
+                shelf_life_view.visibility = View.VISIBLE
+                //moreOptions.visibility = View.INVISIBLE
+                options = true
+            } else {
+                shelfText.visibility = View.INVISIBLE
+                shelf_life_view.visibility = View.INVISIBLE
+                //moreOptions.visibility = View.VISIBLE
+                options = false
+            }
+
         }
 
         signout_button = requireActivity().findViewById(R.id.signout_button)
@@ -307,11 +327,10 @@ class HomeFragment : Fragment() {
         button.setOnClickListener {
             val text_view = requireActivity().findViewById<EditText>(R.id.editItem)
             val quantity_view = requireActivity().findViewById<EditText>(R.id.editQuantity)
-            val shelf_life_view = requireActivity().findViewById<EditText>(R.id.editShelfLife)
 
-            val text = text_view.getText().toString()
-            val quantity = quantity_view.getText().toString()
-            var shelf_life = shelf_life_view.getText().toString()
+            val text = text_view.text.toString()
+            val quantity = quantity_view.text.toString()
+            var shelf_life = shelf_life_view.text.toString()
 
             val myRef_users = database.getReference("users")
 
