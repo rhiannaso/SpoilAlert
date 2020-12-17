@@ -10,17 +10,17 @@
         android:id="@+id/fridge_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="@dimen/fridge_offset"
         android:layout_centerHorizontal="true"
-        android:textSize="25dp"
-        android:text="Fridge is empty."/>
+        android:textSize="@dimen/fridge_textSize"
+        android:text="@string/fridge_is_empty"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:padding="4dp"
+        android:padding="@dimen/fridge_padding"
         tools:listitem="@layout/item_card" />
 
 </RelativeLayout>

@@ -41,7 +41,6 @@ class JoinHouseFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(JoinHouseViewModel::class.java)
-        // TODO: Use the ViewModel
         val database = Firebase.database
         val myRef_houses = database.getReference("houses")
 
@@ -54,8 +53,6 @@ class JoinHouseFragment : Fragment() {
             val success_msg = requireActivity().findViewById<TextView>(R.id.create_success)
             myRef_houses.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    // This method is called once with the initial value and again
-                    // whenever data at this location is updated.
                     if (dataSnapshot.hasChild(username_input)) {
                         Log.i("Create House", "House already exists")
                         err_msg.visibility = View.VISIBLE
@@ -66,7 +63,7 @@ class JoinHouseFragment : Fragment() {
                         given_house.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).setValue(FirebaseAuth.getInstance().currentUser?.displayName.toString())
                         success_msg.visibility = View.VISIBLE
                         err_msg.visibility = View.INVISIBLE
-                        // Hide create/join tab once in a house
+                        // Hide unnecessary tabs once in a house
                         val navigationView = requireActivity().findViewById<View>(R.id.nav_view) as NavigationView
                         val nav_menu: Menu = navigationView.menu
                         nav_menu.findItem(R.id.nav_join_house).isVisible = false
@@ -95,15 +92,13 @@ class JoinHouseFragment : Fragment() {
             val err_msg = requireActivity().findViewById<TextView>(R.id.join_err_msg)
             myRef_houses.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    // This method is called once with the initial value and again
-                    // whenever data at this location is updated.
                     if (dataSnapshot.hasChild(username_input)) {
                         Log.i("Join House", "Joining House")
                         val given_house = myRef_houses.child(username_input)
                         given_house.child(FirebaseAuth.getInstance().currentUser?.uid.toString()).setValue(FirebaseAuth.getInstance().currentUser?.displayName.toString())
                         success_msg.visibility = View.VISIBLE
                         err_msg.visibility = View.INVISIBLE
-                        // Hide create/join tab once in a house
+                        // Hide unnecessary tabs once in a house
                         val navigationView = requireActivity().findViewById<View>(R.id.nav_view) as NavigationView
                         val nav_menu: Menu = navigationView.menu
                         nav_menu.findItem(R.id.nav_join_house).isVisible = false
@@ -127,5 +122,4 @@ class JoinHouseFragment : Fragment() {
             })
         }
     }
-
 }

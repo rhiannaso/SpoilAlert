@@ -4,13 +4,13 @@
     android:id="@+id/bulletin_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:contentPadding="4dp">
+    android:layout_margin="@dimen/card_margin"
+    app:contentPadding="@dimen/card_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp" >
+        android:padding="@dimen/bulletin_card_margin" >
 
         <ImageView
             android:id="@+id/msg_icon"
@@ -26,10 +26,9 @@
             android:id="@+id/bulletin_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="18sp"
+            android:layout_marginStart="@dimen/bulletin_card_margin"
+            android:textSize="@dimen/bulletin_card_text"
             android:textColor="@color/deep_red"
-            android:text="John Doe"
             app:layout_constraintStart_toEndOf="@+id/msg_icon"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/bulletin_text" />
@@ -38,10 +37,9 @@
             android:id="@+id/bulletin_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="14sp"
+            android:layout_marginStart="@dimen/bulletin_card_margin"
+            android:textSize="@dimen/bulletin_card_date"
             android:gravity="end"
-            android:text="Date here"
             app:layout_constraintStart_toEndOf="@+id/bulletin_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -51,9 +49,8 @@
             android:id="@+id/bulletin_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="18sp"
-            android:text="This is a sample message."
+            android:layout_marginStart="@dimen/bulletin_entry_margin"
+            android:textSize="@dimen/bulletin_card_text"
             app:layout_constraintStart_toEndOf="@+id/msg_icon"
             app:layout_constraintTop_toBottomOf="@id/bulletin_name"
             app:layout_constraintBottom_toBottomOf="parent" />

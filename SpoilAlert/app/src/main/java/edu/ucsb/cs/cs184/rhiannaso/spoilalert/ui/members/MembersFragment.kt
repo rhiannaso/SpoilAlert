@@ -48,7 +48,6 @@ class MembersFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MembersViewModel::class.java)
-        // TODO: Use the ViewModel
         val currUser = (activity as MainActivity).getCurrUser()
         val currHouse = (activity as MainActivity).getCurrHouse()
         val recyclerView = requireActivity().findViewById<RecyclerView>(R.id.recycler_view)
@@ -56,25 +55,23 @@ class MembersFragment : Fragment() {
         recyclerView.layoutManager = layoutManager
 
         val database = Firebase.database
-        val myRef_houses = database.getReference("houses")
+        val myRef_houses = database.getReference("houses").child(currHouse)
+        // Retrieve all users' names
         myRef_houses.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val houses = dataSnapshot.children
-                for (house in houses) {
-                    if (house.key == currHouse) {
-                        val allUsers = house.children
-                        for (user in allUsers) {
-                            if(user.key != "messages") {
-                                memberNames.add(user.value.toString())
-                                if (user.key.toString() == currUser) {
-                                    btnVisibility.add("visible")
-                                } else {
-                                    btnVisibility.add("invisible")
-                                }
-                            }
+                val allUsers = dataSnapshot.children
+                for (user in allUsers) {
+                    if(user.key != "messages") {
+                        memberNames.add(user.value.toString())
+                        // If user is current user, allow leave functionality
+                        if (user.key.toString() == currUser) {
+                            btnVisibility.add("visible")
+                        } else { // Else, keep leave button hidden
+                            btnVisibility.add("invisible")
                         }
                     }
                 }
+                // Pass in information to recycler view adapter
                 adapter = MemberRecyclerAdapter(memberNames, btnVisibility, currUser, currHouse, (activity as MainActivity))
                 recyclerView.adapter = adapter
             }

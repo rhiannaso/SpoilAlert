@@ -11,11 +11,31 @@
     <dimen name="load_msg">18sp</dimen>
     <dimen name="entry_message">24sp</dimen>
     <dimen name="entry_prompt">18sp</dimen>
+    <dimen name="google">18sp</dimen>
     <dimen name="cam_btn">8dp</dimen>
 
     <dimen name="bulletin_entry">8dp</dimen>
     <dimen name="bulletin_entry_margin">16dp</dimen>
     <dimen name="send_btn">8dp</dimen>
+
+    <dimen name="fridge_padding">4dp</dimen>
+    <dimen name="fridge_textSize">25sp</dimen>
+    <dimen name="fridge_offset">100dp</dimen>
+
+    <dimen name="card_content">4dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+
+    <dimen name="members_card_margin">16dp</dimen>
+    <dimen name="members_card_text">24sp</dimen>
+
+    <dimen name="bulletin_card_margin">16dp</dimen>
+    <dimen name="bulletin_card_text">18sp</dimen>
+    <dimen name="bulletin_card_date">14sp</dimen>
+
+    <dimen name="pop_up_padding">10dp</dimen>
+    <dimen name="pop_up_head">30sp</dimen>
+    <dimen name="pop_up_subhead">20sp</dimen>
+    <dimen name="pop_up_rad">5dp</dimen>
 
     <dimen name="house_header">32sp</dimen>
     <dimen name="house_desc">14sp</dimen>

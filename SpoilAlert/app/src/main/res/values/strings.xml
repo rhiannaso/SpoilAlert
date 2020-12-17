@@ -53,4 +53,7 @@
     <string name="bulletin_hint">Post Message...</string>
     <string name="house_fridge">House Fridge</string>
     <string name="house_bulletin">House Bulletin</string>
+    <string name="fridge_is_empty">Fridge is empty.</string>
+    <string name="reminder">Reminder:</string>
+    <string name="helloWorld">Hello World</string>
 </resources>

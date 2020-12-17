@@ -56,30 +56,20 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
         fab.visibility = View.GONE
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home,
-//                R.id.nav_fridge,
-                R.id.nav_join_house,
-//                R.id.nav_members,
-//                R.id.nav_house_fridge
+                R.id.nav_join_house
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         createNotificationChannel()
-
     }
 
     fun getCurrUser() : String {
@@ -100,6 +90,7 @@ class MainActivity : AppCompatActivity() {
             currRequestCode -> {
                 if (resultCode == Activity.RESULT_OK) {
                     if (data != null) {
+                        // Get information of current user
                         currUser = data.getStringExtra("user_id")!!
                     }
                     checkIfInHouse()
@@ -108,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun checkIfInHouse() {
+    private fun checkIfInHouse() {
         val database = Firebase.database
         val myRef_houses = database.getReference("houses")
         myRef_houses.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -124,6 +115,7 @@ class MainActivity : AppCompatActivity() {
                             Log.i("checkIfInHouse", "User is in house")
                             houseIdView.text = "In House: ${house.key}"
                             currHouse = house.key.toString()
+                            // Display appropriate tabs for when user is in house
                             nav_menu.findItem(R.id.nav_join_house).isVisible = false
                             nav_menu.findItem(R.id.nav_house_fridge).isVisible = true
                             nav_menu.findItem(R.id.nav_members).isVisible = true
@@ -132,6 +124,7 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             Log.i("checkIfInHouse", "User not in house")
                             houseIdView.text = ""
+                            // Display appropriate tabs for when user is not in house
                             nav_menu.findItem(R.id.nav_join_house).isVisible = true
                             nav_menu.findItem(R.id.nav_house_fridge).isVisible = false
                             nav_menu.findItem(R.id.nav_members).isVisible = false
@@ -148,14 +141,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun onClickSubmit(v: View) {
-        var text_view = findViewById<EditText>(R.id.editItem)
-        var text = text_view.getText().toString()
-        Log.d("input text", text)
-        var uuid = UUID.randomUUID()
-        Log.d("UUID", uuid.toString())
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
@@ -169,33 +154,18 @@ class MainActivity : AppCompatActivity() {
 
     //notificationSetup
     private val CHANNEL_ID = "spoil_alert_id"
-    private val notificationId = 101
 
     private fun createNotificationChannel()
     {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
             val name = "Hello World"
-            val descriptionText = "I am birthed"
             val importance:Int = NotificationManager.IMPORTANCE_DEFAULT
             val channel: NotificationChannel = NotificationChannel(CHANNEL_ID, name, importance).apply{
                 description= "I am born"
             }
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-    private fun sendNotification()
-    {
-        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_kitchen_24px)
-                .setContentTitle("7am")
-                .setContentText("the usual morning line up")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-        with(NotificationManagerCompat.from(this)){
-            notify(notificationId, builder.build())
         }
     }
 }

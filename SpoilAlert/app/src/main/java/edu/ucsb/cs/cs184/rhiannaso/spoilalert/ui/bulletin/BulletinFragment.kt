@@ -42,26 +42,11 @@ class BulletinFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_bulletin, container, false)
     }
 
-    fun getUserName(currUser: String) {
-        val database = Firebase.database
-        val myRef_user = database.getReference("users").child(currUser).child("name")
-        myRef_user.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.i("USERNAME", dataSnapshot.value.toString())
-                return
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
-                Log.w("In get user name", "Failed to read value.", error.toException())
-            }
-        })
-    }
-
     fun checkForMessages() {
         val currHouse = (activity as MainActivity).getCurrHouse()
         val database = Firebase.database
         val myRef_messages = database.getReference("houses").child(currHouse).child("messages")
+        // Retrieve all messages and information to display
         myRef_messages.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val dbMsgs = dataSnapshot.children
@@ -102,14 +87,14 @@ class BulletinFragment : Fragment() {
         val myRef_user = database.getReference("users").child(currUser).child("name")
         val myRef_thisHouse = database.getReference("houses").child(currHouse).child("messages")
         send_btn.setOnClickListener {
-            val msgText = msgView.text.toString()
-            val c: Calendar = Calendar.getInstance()
-            val msgKey = c.timeInMillis
+            val msgText = msgView.text.toString() // Retrieve user's message
+            val c: Calendar = Calendar.getInstance() // Retrieve time that message was sent
+            val msgKey = c.timeInMillis // Get time since epoch for unique key
             val df = SimpleDateFormat("MM/dd/yyyy (HH:mm)")
             val msgDate: String = df.format(c.time)
             myRef_user.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val userName = dataSnapshot.value.toString()
+                    val userName = dataSnapshot.value.toString() // Retrieve user's name
                     val msgToSend = BulletinMsg(userName, msgDate, msgText)
                     myRef_thisHouse.child(msgKey.toString()).setValue(msgToSend)
                     checkForMessages()
@@ -120,7 +105,7 @@ class BulletinFragment : Fragment() {
                     Log.w("In get user name", "Failed to read value.", error.toException())
                 }
             })
-            msgView.text = null
+            msgView.text = null // Clear EditText after submission
         }
         checkForMessages()
     }

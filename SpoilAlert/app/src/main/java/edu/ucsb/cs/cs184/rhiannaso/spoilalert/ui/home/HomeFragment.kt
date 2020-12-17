@@ -264,8 +264,10 @@ class HomeFragment : Fragment() {
                 .addOnCompleteListener {
                     // ...
                 }
+            // Close the open drawer upon signout
             val drawerLayout: DrawerLayout = requireActivity().findViewById(R.id.drawer_layout)
             drawerLayout.closeDrawer(Gravity.START as Int)
+            // Relaunch landing activity after sign-out
             val landingIntent = Intent(
                     requireActivity().applicationContext,
                     LandingActivity::class.java
@@ -280,8 +282,6 @@ class HomeFragment : Fragment() {
 
         myRef_items.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-
                 for(food in dataSnapshot.children)
                 {
                     foods.add(food.child("name").value.toString())
@@ -293,8 +293,7 @@ class HomeFragment : Fragment() {
             }
             })
 
-        var text_view = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
-        //val languages = resources.getStringArray(R.array.Languages)
+        val text_view = requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
         val adapter = context?.let {
             ArrayAdapter(
                     it,
@@ -303,21 +302,18 @@ class HomeFragment : Fragment() {
         }
         text_view.setAdapter(adapter)
 
-        var button = requireActivity().findViewById<Button>(R.id.submit_button)
+        val button = requireActivity().findViewById<Button>(R.id.submit_button)
         // onClick for submit item button
         button.setOnClickListener {
-            var text_view = requireActivity().findViewById<EditText>(R.id.editItem)
-            var quantity_view = requireActivity().findViewById<EditText>(R.id.editQuantity)
-            var shelf_life_view = requireActivity().findViewById<EditText>(R.id.editShelfLife)
+            val text_view = requireActivity().findViewById<EditText>(R.id.editItem)
+            val quantity_view = requireActivity().findViewById<EditText>(R.id.editQuantity)
+            val shelf_life_view = requireActivity().findViewById<EditText>(R.id.editShelfLife)
 
-            var text = text_view.getText().toString()
-            var quantity = quantity_view.getText().toString()
+            val text = text_view.getText().toString()
+            val quantity = quantity_view.getText().toString()
             var shelf_life = shelf_life_view.getText().toString()
 
-            val database = Firebase.database
-            val myRef_items = database.getReference("items")
             val myRef_users = database.getReference("users")
-
 
                 myRef_items.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -352,13 +348,8 @@ class HomeFragment : Fragment() {
 
                             // This method is called once with the initial value and again
                             // whenever data at this location is updated.
-                            /*Log.d(
-                                            "input",
-                                            dataSnapshot.child(text)
-                                                    .child("name").value.toString() + "for user: " + FirebaseAuth.getInstance().uid.toString()
-                                    )*/
                             // generate new uid for entry if the item is in the db items table
-                            var uuid = UUID.randomUUID()
+                            val uuid = UUID.randomUUID()
                             Log.d("UUID", uuid.toString())
                             // add item name to users item log
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
@@ -377,8 +368,7 @@ class HomeFragment : Fragment() {
                                     dataSnapshot.child(text).child("shelf_life").value.toString()
                             }
 
-                            var expiration = viewModel.calculateExpiration(shelf_life.toInt())
-
+                            val expiration = viewModel.calculateExpiration(shelf_life.toInt())
 
                             myRef_users.child(FirebaseAuth.getInstance().currentUser?.uid.toString())
                                 .child("items").child(uuid.toString()).child("expiration_date")
@@ -398,14 +388,12 @@ class HomeFragment : Fragment() {
                             quantity_view.setText(null)
                             shelf_life_view.setText(null)
 
-                            var msg = "$quantity $text(s) added to your fridge!"
+                            val msg = "$quantity $text(s) added to your fridge!"
 
                             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                             val foodView =
                                 requireActivity().findViewById<AutoCompleteTextView>(R.id.editItem)
                             foodView.hint = getString(R.string.log_hint)
-
-
                         }
 
                     }
@@ -419,28 +407,13 @@ class HomeFragment : Fragment() {
     }
     private val CHANNEL_ID = "spoil_alert_id"
     private val notificationId = 101
-    private fun sendNotification() {
-        val builder = context?.let {
-            NotificationCompat.Builder(it, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_kitchen_24px)
-                .setContentTitle("7am")
-                .setContentText("the usual morning line up")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        }
-
-        if (builder != null) {
-            with(context?.let { NotificationManagerCompat.from(it) }) {
-                this?.notify(notificationId, builder.build())
-            }
-        }
-    }
 
     //sets an alarm to send a notification
     private fun setNotificationTime(itemName: String, date: String) : Int {
         val format = SimpleDateFormat("EEEE, MM/dd/yyyy 'at' h:mm a")
-        var d: Date = Date()
+        var d = Date()
         try {
-            d = format.parse(date)
+            d = format.parse(date)!!
         } catch (e : ParseException) {
             Log.d("HomeFragment", e.message!!)
         }
@@ -464,7 +437,6 @@ class HomeFragment : Fragment() {
 
         //set alarm
         c.time = d
-//        c.add(Calendar.SECOND, 5)
         val futureInMillis = c.timeInMillis
         val aM = activity?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         aM.set(AlarmManager.RTC_WAKEUP, futureInMillis, pIntent)
